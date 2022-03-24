@@ -1,18 +1,11 @@
 import entity.UserEntity;
-import lombok.RequiredArgsConstructor;
-import mapper.UserMapper;
-import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
-public class UserService {
+public interface UserService {
 
-    private final UserRepository repository;
-
-    public Optional<UserEntity> findByName(String name) {
-        return repository.findByName(name);
-    }
+    List<UserEntity> findAll();
+    Optional<UserEntity> findByName(String name);
 
 }
