@@ -1,15 +1,15 @@
 import dto.UserDTO;
 import dto.UsersDTO;
 import entity.UserEntity;
-import lombok.RequiredArgsConstructor;
+import exception.UserNotFoundException;
+import lombok.AllArgsConstructor;
 import mapper.UserMapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 @RequestMapping(path = "/users")
 public class UserController {
 
@@ -18,17 +18,20 @@ public class UserController {
 
     @GetMapping()
     public UsersDTO getUsers() {
-        List<UserDTO> users = userService.findAll()
-                .stream()
-                .map(userMapper::userIntoDTO)
-                .collect(Collectors.toList());
-
+        List<UserDTO> users = userService.findAll();
         return new UsersDTO(users);
     }
 
     @GetMapping("/{name}")
     public UserDTO getUser(@PathVariable String name) {
-        UserEntity user = userService.findByName(name).orElseThrow(NullPointerException::new);
+        UserEntity user = userService.findByName(name).orElseThrow(UserNotFoundException::new);
+
+        return userMapper.userIntoDTO(user);
+    }
+
+    @GetMapping("/user/{id}")
+    public UserDTO getUserById(@PathVariable Long id) {
+        UserEntity user = userService.findById(id).orElseThrow(UserNotFoundException::new);
 
         return userMapper.userIntoDTO(user);
     }

@@ -27,6 +27,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <modelmapper.version>3.0.0</modelmapper.version>
+        <models.version>1.0.0</models.version>
     </properties>
 
     <dependencyManagement>
@@ -34,43 +35,43 @@
             <dependency>
                 <groupId>org.example</groupId>
                 <artifactId>entity</artifactId>
-                <version>1.0.0</version>
+                <version>${models.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.example</groupId>
                 <artifactId>service</artifactId>
-                <version>1.0.0</version>
+                <version>${models.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.example</groupId>
                 <artifactId>repository</artifactId>
-                <version>1.0.0</version>
+                <version>${models.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.example</groupId>
                 <artifactId>controller</artifactId>
-                <version>1.0.0</version>
+                <version>${models.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+            </dependency>
+            <dependency>
+                <groupId>org.modelmapper</groupId>
+                <artifactId>modelmapper</artifactId>
+                <version>${modelmapper.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>${modelmapper.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 
