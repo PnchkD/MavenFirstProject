@@ -1,9 +1,11 @@
-import dto.UserDTO;
-import dto.UsersDTO;
-import entity.UserEntity;
-import exception.UserNotFoundException;
+package by.iba;
+
+import by.iba.dto.UserDTO;
+import by.iba.dto.UsersDTO;
+import by.iba.entity.UserEntity;
+import by.iba.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
-import mapper.UserMapper;
+import by.iba.mapper.UserMapper;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +24,12 @@ public class UserController {
         return new UsersDTO(users);
     }
 
-    @GetMapping("/{name}")
+/*    @GetMapping("/{name}")
     public UserDTO getUser(@PathVariable String name) {
         UserEntity user = userService.findByName(name).orElseThrow(UserNotFoundException::new);
 
         return userMapper.userIntoDTO(user);
-    }
+    }*/
 
     @GetMapping("/user/{id}")
     public UserDTO getUserById(@PathVariable Long id) {

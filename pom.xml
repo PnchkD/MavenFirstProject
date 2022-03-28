@@ -21,6 +21,7 @@
         <module>service</module>
         <module>repository</module>
         <module>entity</module>
+        <module>security</module>
     </modules>
 
     <properties>
@@ -28,6 +29,8 @@
         <maven.compiler.target>11</maven.compiler.target>
         <modelmapper.version>3.0.0</modelmapper.version>
         <models.version>1.0.0</models.version>
+        <postgre.version>42.3.3</postgre.version>
+        <jwt.version>0.9.1</jwt.version>
     </properties>
 
     <dependencyManagement>
@@ -49,17 +52,29 @@
             </dependency>
             <dependency>
                 <groupId>org.example</groupId>
-                <artifactId>controller</artifactId>
+                <artifactId>repository</artifactId>
+                <version>${models.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.example</groupId>
+                <artifactId>security</artifactId>
                 <version>${models.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
+                <version>${postgre.version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.modelmapper</groupId>
                 <artifactId>modelmapper</artifactId>
                 <version>${modelmapper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jwt.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -69,10 +84,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
     </dependencies>
+
 
 </project>

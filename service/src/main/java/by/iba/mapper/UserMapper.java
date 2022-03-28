@@ -1,7 +1,7 @@
-package mapper;
+package by.iba.mapper;
 
-import dto.UserDTO;
-import entity.UserEntity;
+import by.iba.dto.UserDTO;
+import by.iba.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

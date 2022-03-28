@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/automotive_selection
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  security:
+    user:
+      name: admin
+      password: admin
+
+
+security-token-app:
+  auth:
+    accessTokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    accessTokenExpirationMsec: 60000000 #60000=one minute; remove one 0 and show tokes death
+
+    refreshTokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    refreshTokenExpirationMsec: 120000000 #one minute; remove one 0 and show tokes death
