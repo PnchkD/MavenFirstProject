@@ -1,12 +1,12 @@
-package by.iba.dto;
+package by.iba.dto.in;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class ErrorDTO {
-    private String code;
+@AllArgsConstructor
+public class UserChangeAvatarInDTO {
+    private String image;
 }

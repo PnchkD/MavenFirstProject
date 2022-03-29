@@ -1,8 +1,8 @@
 package by.iba;
 
-import by.iba.dto.UserDTO;
-import by.iba.entity.UserEntity;
-import org.springframework.transaction.annotation.Transactional;
+import by.iba.dto.out.UserDTO;
+import by.iba.entity.user.Role;
+import by.iba.entity.user.UserEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +14,7 @@ public interface UserService {
     Optional<UserEntity> findById(Long id);
     Optional<UserEntity> findByLogin(String login);
     void save(UserEntity user);
+    void save(UserEntity user, Role role);
 
 
 }

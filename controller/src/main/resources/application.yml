@@ -4,17 +4,13 @@ spring:
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
+    initialization-mode: always
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-  security:
-    user:
-      name: admin
-      password: admin
 
 
 security-token-app:
@@ -24,3 +20,14 @@ security-token-app:
 
     refreshTokenSecret: 926D96C90030DD58429D2751AC1BDBBC
     refreshTokenExpirationMsec: 120000000 #one minute; remove one 0 and show tokes death
+
+admin:
+  name: admin
+  login: master
+  password: master
+  email: admin@gmail.com
+  enabled: true
+scheduler:
+  admin:
+    adminVerification:
+      fixedRateMs: 10000

@@ -1,6 +1,6 @@
 package by.iba;
 
-import by.iba.dto.ErrorDTO;
+import by.iba.dto.out.ErrorDTO;
 import by.iba.exception.AbstractInternalApplicationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;

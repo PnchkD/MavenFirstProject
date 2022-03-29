@@ -1,16 +1,13 @@
-package by.iba.dto;
+package by.iba.dto.in;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsersDTO {
-
-    private List<UserDTO> usersDTO;
-
+public class UserAuthInDTO {
+    private String login;
+    private String password;
 }

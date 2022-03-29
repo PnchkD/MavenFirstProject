@@ -1,6 +1,6 @@
 package by.iba.filter;
 
-import by.iba.entity.UserEntity;
+import by.iba.entity.user.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,10 +21,10 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = TOKEN_TYPE + SPACE;
 
 
-    //@Value("${security.jwt.secretKey}")
-    private String secretKey = "926D96C90030DD58429D2751AC1BDBBC";
-    //@Value("${security.jwt.expirationSeconds}")
-    private int expirationSeconds = 60000000;
+    @Value("${security-token-app.auth.accessTokenSecret}")
+    private String secretKey;
+    @Value("${security-token-app.auth.accessTokenExpirationMsec}")
+    private int expirationSeconds;
 
     @PostConstruct
     private void init(){

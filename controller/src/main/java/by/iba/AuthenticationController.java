@@ -1,22 +1,22 @@
 package by.iba;
 
-import by.iba.dto.AccessTokenOutDTO;
-import by.iba.dto.SuccessfulOutDTO;
-import by.iba.dto.UserAuthInDTO;
-import by.iba.dto.UserRegistrationInDTO;
-import by.iba.entity.UserEntity;
+import by.iba.dto.out.AccessTokenOutDTO;
+import by.iba.dto.out.ErrorDTO;
+import by.iba.dto.out.SuccessfulOutDTO;
+import by.iba.dto.in.UserAuthInDTO;
+import by.iba.dto.in.UserRegistrationInDTO;
+import by.iba.entity.user.Photo;
+import by.iba.entity.user.UserEntity;
 import by.iba.exception.UserHasBeenAlreadyRegisteredException;
+import by.iba.exception.UserHasBeenBanned;
 import by.iba.filter.AccessToken;
 import by.iba.filter.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +43,7 @@ public class AuthenticationController {
     public SuccessfulOutDTO registerUser(@RequestBody UserRegistrationInDTO userRegistrationInDTO) {
 
         UserEntity user = objectMapper.convertValue(userRegistrationInDTO, UserEntity.class);
+        user.setAvatar(new Photo(userRegistrationInDTO.getImage()));
 
         if (userService.findByLogin(user.getLogin()).isPresent()) {
             throw new UserHasBeenAlreadyRegisteredException();
@@ -66,6 +67,10 @@ public class AuthenticationController {
 
         UserEntity user = userService.findByLogin(login)
                 .orElseThrow(() -> new BadCredentialsException("User hasn't been found"));
+
+        if(user.getBannedDate() != null) {
+            throw new UserHasBeenBanned();
+        }
 
         AccessToken accessToken = jwtUtil.generateToken(user);
 

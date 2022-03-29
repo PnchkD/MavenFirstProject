@@ -1,8 +1,8 @@
 package by.iba.service;
 
 import by.iba.repository.UserRepository;
-import by.iba.entity.UserEntity;
-import lombok.RequiredArgsConstructor;
+import by.iba.entity.user.UserEntity;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserDetails user = User.builder()
                 .username(myUser.get().getLogin())
                 .password(myUser.get().getPassword())
-                .roles(myUser.get().getRole())
+                .roles(myUser.get().getRole().toString())
                 .build();
         return user;
     }

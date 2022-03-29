@@ -35,5 +35,9 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>service</artifactId>
+        </dependency>
     </dependencies>
 </project>
