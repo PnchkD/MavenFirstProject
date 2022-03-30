@@ -3,6 +3,7 @@ package by.iba;
 import by.iba.dto.out.ErrorDTO;
 import by.iba.exception.AbstractInternalApplicationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,6 +27,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     public ErrorDTO handleBadCredentialsException(BadCredentialsException e){
         ErrorDTO errorDTO = new ErrorDTO();
         errorDTO.setCode("FAILED_LOGIN");
+
+        return errorDTO;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDTO handleUserHasBeenBannedException(AccountStatusException e){
+        ErrorDTO errorDTO = new ErrorDTO();
+        errorDTO.setCode("USER_HAS_BEEN_BANNED");
 
         return errorDTO;
     }

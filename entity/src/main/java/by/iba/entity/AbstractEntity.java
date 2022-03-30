@@ -22,6 +22,12 @@ public abstract class AbstractEntity extends BaseAbstractEntity {
     @Column(name = "date_of_last_update")
     private LocalDateTime dateOfLastUpdate;
 
+    @Column(name = "date_of_last_login")
+    private LocalDateTime dateOfLastLogin;
+
+    @Column(name = "date_of_confirm")
+    private LocalDateTime dateOfConfirm;
+
     @Column(name = "banned_date")
     private LocalDateTime bannedDate;
 

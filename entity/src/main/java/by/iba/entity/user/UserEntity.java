@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -33,6 +34,6 @@ public class UserEntity extends AbstractEntity {
     private Photo avatar;
 
     @Column(name = "is_mail_confirmed")
-    private boolean isMailConfirmed;
+    private LocalDateTime isMailConfirmed;
 
 }

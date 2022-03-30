@@ -1,7 +1,13 @@
 package by.iba.exception;
 
-public class UserHasBeenBanned extends RuntimeException {
-    public UserHasBeenBanned() {
-        super("User has been banned.");
+import org.springframework.security.authentication.AccountStatusException;
+
+public class UserHasBeenBanned extends AccountStatusException {
+    public UserHasBeenBanned(String msg) {
+        super(msg);
+    }
+
+    public UserHasBeenBanned(String msg, Throwable t) {
+        super(msg, t);
     }
 }

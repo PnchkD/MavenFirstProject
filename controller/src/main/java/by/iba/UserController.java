@@ -4,16 +4,13 @@ import by.iba.dto.in.UserChangeAvatarInDTO;
 import by.iba.dto.in.UserChangeCredentialsInDTO;
 import by.iba.dto.in.UserChangingInDTO;
 import by.iba.dto.out.SuccessfulOutDTO;
-import by.iba.dto.out.UserDTO;
-import by.iba.dto.out.UsersDTO;
+import by.iba.dto.out.UserOutDTO;
 import by.iba.entity.user.UserEntity;
 import by.iba.exception.UserNotFoundException;
 import by.iba.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import by.iba.mapper.UserMapper;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -23,21 +20,8 @@ public class UserController {
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
 
-    @GetMapping()
-    public UsersDTO getUsers() {
-        List<UserDTO> users = userService.findAll();
-        return new UsersDTO(users);
-    }
-
-/*    @GetMapping("/{name}")
-    public UserDTO getUser(@PathVariable String name) {
-        UserEntity user = userService.findByName(name).orElseThrow(UserNotFoundException::new);
-
-        return userMapper.userIntoDTO(user);
-    }*/
-
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable Long id) {
+    public UserOutDTO getUserById(@PathVariable Long id) {
         UserEntity user = userService.findById(id).orElseThrow(UserNotFoundException::new);
 
         return userMapper.userIntoDTO(user);
