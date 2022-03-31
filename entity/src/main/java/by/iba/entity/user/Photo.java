@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-//@Table(name = "images")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

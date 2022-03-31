@@ -1,18 +1,20 @@
 package by.iba.mapper;
 
-import by.iba.dto.in.UserChangeAvatarInDTO;
-import by.iba.dto.in.UserChangeCredentialsInDTO;
-import by.iba.dto.in.UserChangeRoleInDTO;
-import by.iba.dto.in.UserChangingInDTO;
-import by.iba.dto.out.UserForAdminOutDTO;
-import by.iba.dto.out.UserOutDTO;
+import by.iba.UserRolesService;
+import by.iba.dto.req.UserChangeAvatarReqDTO;
+import by.iba.dto.req.UserChangeCredentialsReqDTO;
+import by.iba.dto.req.UserChangeRoleReqDTO;
+import by.iba.dto.req.UserChangePersonalDataReqDTO;
+import by.iba.dto.resp.UserDTO;
 import by.iba.entity.user.Photo;
-import by.iba.entity.user.Role;
 import by.iba.entity.user.UserEntity;
+import by.iba.entity.user.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -20,53 +22,52 @@ public class UserMapper {
 
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRolesService userRolesService;
 
-    public UserOutDTO userIntoDTO(UserEntity user) {
-        UserOutDTO userOutDTO = modelMapper.map(user, UserOutDTO.class);
-        if(user.getAvatar() != null) {
-            userOutDTO.setAvatar(user.getAvatar().getImageUrl());
+    public UserDTO userIntoDTO(UserEntity user) {
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        if(Objects.nonNull(user.getAvatar())) {
+            userDTO.setAvatar(user.getAvatar().getImageUrl());
         }
-        return userOutDTO;
+        userDTO.setRole(userRolesService.findByUserId(user.getId()).getName());
+        return userDTO;
     }
 
-    public UserForAdminOutDTO userForAdminOutDTO(UserEntity user) {
-        return modelMapper.map(user, UserForAdminOutDTO.class);
-    }
-
-    public void fillFromInDTO(UserEntity user, UserChangingInDTO userChangingInDTO){
-        if(userChangingInDTO.getEmail() != null) {
+    public void fillFromInDTO(UserEntity user, UserChangePersonalDataReqDTO userChangingInDTO){
+        if(Objects.nonNull(userChangingInDTO.getEmail())) {
             user.setEmail(userChangingInDTO.getEmail());
         }
 
-        if(userChangingInDTO.getFirstName() != null) {
+        if(Objects.nonNull(userChangingInDTO.getFirstName())) {
             user.setFirstName(userChangingInDTO.getFirstName());
         }
 
-        if(userChangingInDTO.getLastName() != null) {
+        if(Objects.nonNull(userChangingInDTO.getLastName())) {
             user.setLastName(userChangingInDTO.getLastName());
         }
 
     }
 
-    public void fillFromInDTO(UserEntity user, UserChangeCredentialsInDTO userChangingInDTO) {
-        if (userChangingInDTO.getLogin() != null) {
-            user.setLogin(userChangingInDTO.getLogin());
-        }
+    public void fillFromInDTO(UserEntity user, UserChangeCredentialsReqDTO userChangingInDTO) {
 
-        if (userChangingInDTO.getPassword() != null) {
-            user.setPassword(bCryptPasswordEncoder.encode(userChangingInDTO.getPassword()));
+        if (Objects.nonNull(userChangingInDTO.getNewPassword())
+                && userChangingInDTO.getNewPassword().equals(userChangingInDTO.getConfirmedPassword())
+                && !userChangingInDTO.getNewPassword().equals(userChangingInDTO.getOldPassword())) {
+
+            user.setPassword(bCryptPasswordEncoder.encode(userChangingInDTO.getNewPassword()));
+
         }
     }
 
-    public void fillFromInDTO(UserEntity user, UserChangeAvatarInDTO userChangeAvatarInDTO) {
-        if (userChangeAvatarInDTO.getImage() != null) {
+    public void fillFromInDTO(UserEntity user, UserChangeAvatarReqDTO userChangeAvatarInDTO) {
+        if (Objects.nonNull(userChangeAvatarInDTO.getImage())) {
             user.setAvatar(new Photo(userChangeAvatarInDTO.getImage()));
         }
     }
 
-    public void fillFromInDTO(UserEntity user, UserChangeRoleInDTO userChangeRoleInDTO) {
-        if (userChangeRoleInDTO.getRole() != null) {
-            user.setRole(Role.valueOf(userChangeRoleInDTO.getRole()));
+    public void fillFromInDTO(UserEntity user, UserChangeRoleReqDTO userChangeRoleInDTO) {
+        if (Objects.nonNull(userChangeRoleInDTO.getRole())) {
+            user.getRoles().add(userRolesService.createRole(userChangeRoleInDTO.getRole(), user.getId()));
         }
     }
 

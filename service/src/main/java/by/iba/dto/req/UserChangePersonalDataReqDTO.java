@@ -1,4 +1,4 @@
-package by.iba.dto.in;
+package by.iba.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserChangingInDTO {
+public class UserChangePersonalDataReqDTO {
     private String firstName;
     private String lastName;
     private String email;

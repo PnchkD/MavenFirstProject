@@ -1,5 +1,6 @@
 package by.iba.filter;
 
+import by.iba.UserRolesService;
 import by.iba.entity.user.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,6 +21,7 @@ public class JwtUtil {
     public static final String SPACE = " ";
     public static final String BEARER_PREFIX = TOKEN_TYPE + SPACE;
 
+    private final UserRolesService userRolesService;
 
     @Value("${security-token-app.auth.accessTokenSecret}")
     private String secretKey;
@@ -49,7 +51,7 @@ public class JwtUtil {
         String rolePrefix = "ROLE_";
         Claims claims = Jwts.claims()
                 .setSubject(user.getLogin());
-        claims.put("role", rolePrefix + user.getRole());
+        claims.put("role", rolePrefix + userRolesService.findByUserId(user.getId()));
         claims.put("id", user.getId());
 
         Date currentDate = new Date();

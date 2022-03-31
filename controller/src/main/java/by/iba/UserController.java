@@ -1,65 +1,27 @@
 package by.iba;
 
-import by.iba.dto.in.UserChangeAvatarInDTO;
-import by.iba.dto.in.UserChangeCredentialsInDTO;
-import by.iba.dto.in.UserChangingInDTO;
-import by.iba.dto.out.SuccessfulOutDTO;
-import by.iba.dto.out.UserOutDTO;
-import by.iba.entity.user.UserEntity;
-import by.iba.exception.UserNotFoundException;
-import by.iba.impl.UserServiceImpl;
-import lombok.AllArgsConstructor;
-import by.iba.mapper.UserMapper;
+import by.iba.dto.req.UserChangeAvatarReqDTO;
+import by.iba.dto.req.UserChangeCredentialsReqDTO;
+import by.iba.dto.req.UserChangePersonalDataReqDTO;
+import by.iba.dto.resp.SuccessfulDTO;
+import by.iba.dto.resp.UserDTO;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@AllArgsConstructor
-@RequestMapping(path = "/me")
-public class UserController {
-
-    private final UserServiceImpl userService;
-    private final UserMapper userMapper;
+@RequestMapping(path = "/api/v1/users")
+public interface UserController {
 
     @GetMapping("/{id}")
-    public UserOutDTO getUserById(@PathVariable Long id) {
-        UserEntity user = userService.findById(id).orElseThrow(UserNotFoundException::new);
-
-        return userMapper.userIntoDTO(user);
-    }
+    ResponseEntity<UserDTO> getUserById(@PathVariable Long id);
 
     @PutMapping("/{id}")
-    public SuccessfulOutDTO changeUser(@RequestBody UserChangingInDTO userChangingInDTO, @PathVariable Long id) {
-        UserEntity user = userService.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+    ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserChangePersonalDataReqDTO userChangingInDTO);
 
-        userMapper.fillFromInDTO(user, userChangingInDTO);
-        userService.save(user);
+    @PutMapping("/{id}/avatar")
+    ResponseEntity<SuccessfulDTO> updateAvatar(@PathVariable Long id, @RequestBody UserChangeAvatarReqDTO userChangeAvatarInDTO);
 
-        return new SuccessfulOutDTO("User was changed");
-    }
-
-    @PutMapping("/avatar/{id}")
-    public SuccessfulOutDTO changeAvatar(@RequestBody UserChangeAvatarInDTO userChangeAvatarInDTO, @PathVariable Long id) {
-        UserEntity user = userService.findById(id)
-                .orElseThrow(UserNotFoundException::new);
-
-        userMapper.fillFromInDTO(user, userChangeAvatarInDTO);
-
-        userService.save(user);
-
-        return new SuccessfulOutDTO("User was changed");
-    }
-
-    @PutMapping("/credentials/{id}")
-    public SuccessfulOutDTO changeUserPassword(@RequestBody UserChangeCredentialsInDTO userChangeCredentialsInDTO, @PathVariable Long id) {
-        UserEntity user = userService.findById(id)
-                .orElseThrow(UserNotFoundException::new);
-
-        userMapper.fillFromInDTO(user, userChangeCredentialsInDTO);
-
-        userService.save(user);
-
-        return new SuccessfulOutDTO("User was changed");
-    }
+    @PutMapping("/{id}/credentials")
+    ResponseEntity<SuccessfulDTO> updatePassword(@PathVariable Long id, @RequestBody UserChangeCredentialsReqDTO userChangeCredentialsInDTO);
 
 }

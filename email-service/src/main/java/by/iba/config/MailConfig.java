@@ -1,16 +1,23 @@
 package by.iba.config;
 
+import by.iba.service.EmailService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import service.EmailService;
-import service.impl.DefaultEmailService;
+import by.iba.service.impl.DefaultEmailService;
 
 import java.util.Properties;
 
 @Configuration
 public class MailConfig {
+
+    @Value("${spring.mail.username}")
+    private String userEmail;
+
+    @Value("${spring.mail.password}")
+    private String userPassword;
 
     @Bean
     public JavaMailSender getJavaMailSender() {
@@ -18,8 +25,8 @@ public class MailConfig {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        mailSender.setUsername("dmtrpnchk@gmail.com");
-        mailSender.setPassword("pnchkdmtr");
+        mailSender.setUsername(userEmail);
+        mailSender.setPassword(userPassword);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");

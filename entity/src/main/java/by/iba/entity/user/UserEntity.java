@@ -6,9 +6,12 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
 @Entity
+@Table(name = "users")
+@Data
 @NoArgsConstructor
 public class UserEntity extends AbstractEntity {
 
@@ -27,13 +30,23 @@ public class UserEntity extends AbstractEntity {
     @Column(name = "email", length = 128, unique = true)
     private String email;
 
-    @Column(name =  "role")
-    private Role role;
+    @OneToMany
+    @JoinColumn(name = "user_id", referencedColumnName="id")
+    private Set<UserRole> roles = new HashSet<>();
 
     @Column(name = "avatar")
     private Photo avatar;
 
     @Column(name = "is_mail_confirmed")
     private LocalDateTime isMailConfirmed;
+
+    @Column(name = "date_of_last_login")
+    private LocalDateTime dateOfLastLogin;
+
+    @Column(name = "date_of_approved")
+    private LocalDateTime dateOfApproved;
+
+    @Column(name = "banned_date")
+    private LocalDateTime bannedDate;
 
 }

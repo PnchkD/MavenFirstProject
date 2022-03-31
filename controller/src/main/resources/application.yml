@@ -1,16 +1,23 @@
+
+##################### SPRING GLOBAL #################################
 spring:
+  ##################### DATA SOURCE #################################
   datasource:
+    driver-class-name: org.postgresql.Driver
+    initialization-mode: always
+    ##################### MY SQL DATABASE #################################
     url: jdbc:postgresql://localhost:5432/automotive_selection
     username: postgres
     password: admin
-    driver-class-name: org.postgresql.Driver
-    initialization-mode: always
+  ##################### JPA USED SPRING DATA #################################
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+  ##################### SPRING MAIL PROPERTIES #################################
   mail:
     host: smtp.gmail.com
     port: 587
@@ -23,21 +30,12 @@ spring:
           starttls:
             enable: true
 
+
+####################### SECURITY ############################
 security-token-app:
   auth:
-    accessTokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    accessTokenExpirationMsec: 60000000 #60000=one minute; remove one 0 and show tokes death
+    accessTokenSecret: secretKey
+    accessTokenExpirationMsec: 30000000 #60000=one minute; remove one 0 and show tokes death
 
     refreshTokenSecret: 926D96C90030DD58429D2751AC1BDBBC
     refreshTokenExpirationMsec: 120000000 #one minute; remove one 0 and show tokes death
-
-admin:
-  name: admin
-  login: master
-  password: master
-  email: admin@gmail.com
-  enabled: true
-scheduler:
-  admin:
-    adminVerification:
-      fixedRateMs: 10000

@@ -1,12 +1,16 @@
-package by.iba.dto.in;
+package by.iba.dto.resp;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserChangeRoleInDTO {
-    private String role;
+public class UsersDTO {
+
+    private List<UserDTO> usersDTO;
+
 }

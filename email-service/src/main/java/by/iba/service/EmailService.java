@@ -1,4 +1,4 @@
-package service;
+package by.iba.service;
 
 public interface EmailService {
 

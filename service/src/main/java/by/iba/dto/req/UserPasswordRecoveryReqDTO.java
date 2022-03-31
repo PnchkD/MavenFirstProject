@@ -1,5 +1,4 @@
-package by.iba.dto.in;
-
+package by.iba.dto.req;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserChangePasswordInDTO {
-    private String password;
+public class UserPasswordRecoveryReqDTO {
+    private String login;
+    private String newPassword;
     private String confirmedPassword;
 }
