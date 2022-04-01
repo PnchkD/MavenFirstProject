@@ -4,7 +4,7 @@ spring:
   ##################### DATA SOURCE #################################
   datasource:
     driver-class-name: org.postgresql.Driver
-    initialization-mode: always
+    #initialization-mode: always
     ##################### MY SQL DATABASE #################################
     url: jdbc:postgresql://localhost:5432/automotive_selection
     username: postgres
@@ -12,7 +12,7 @@ spring:
   ##################### JPA USED SPRING DATA #################################
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

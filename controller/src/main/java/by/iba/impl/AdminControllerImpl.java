@@ -2,9 +2,8 @@ package by.iba.impl;
 
 import by.iba.AdminController;
 import by.iba.UserService;
-import by.iba.dto.req.UserChangeRoleReqDTO;
+import by.iba.dto.req.UserRolesReqDTO;
 import by.iba.dto.resp.*;
-import by.iba.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,6 @@ import java.util.List;
 public class AdminControllerImpl implements AdminController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @Override
     public ResponseEntity<UsersDTO> getUsers() {
@@ -28,40 +26,50 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public ResponseEntity<SuccessfulDTO> banUser(@PathVariable Long id) {
-        userService.banUser(id, true);
+    public ResponseEntity<RespStatusDTO> banUser(@PathVariable Long id) {
+
+        if(!userService.banUser(id, true)) {
+            return ResponseEntity
+                    .status(400)
+                    .body(new RespStatusDTO("ADMIN_CANNOT_BAN_HIMSELF"));
+        }
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("User has been banned"));
+                .body(new RespStatusDTO("USER_NAS_BEEN_BANNED"));
     }
 
     @Override
-    public ResponseEntity<SuccessfulDTO> unbanUser(@PathVariable Long id) {
+    public ResponseEntity<RespStatusDTO> unbanUser(@PathVariable Long id) {
         userService.banUser(id, false);
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("User has been unbanned"));
+                .body(new RespStatusDTO("USER_NAS_BEEN_BANNED"));
     }
 
 
     @Override
-    public ResponseEntity<SuccessfulDTO> confirmUser(@PathVariable Long id) {
+    public ResponseEntity<RespStatusDTO> confirmUser(@PathVariable Long id) {
         userService.confirmUser(id);
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("User has been confirmed"));
+                .body(new RespStatusDTO("User has been confirmed"));
     }
 
     @Override
-    public ResponseEntity<SuccessfulDTO> updateUserRole(@PathVariable Long id, @RequestBody UserChangeRoleReqDTO userChangeRoleInDTO) {
-        userService.updateUserRole(id, userChangeRoleInDTO);
+    public ResponseEntity<RespStatusDTO> updateUserRole(@PathVariable Long id, @RequestBody UserRolesReqDTO userChangeRoleInDTO) {
+
+        if(!userService.updateUserRole(id, userChangeRoleInDTO)) {
+            ResponseEntity
+                    .status(400)
+                    .body(new RespStatusDTO("USER_MUST_HAVE_A_ROLE"));
+        }
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("User role was changed"));
+                .body(new RespStatusDTO("USER_ROLES_WAS_CHANGED"));
     }
 
 }

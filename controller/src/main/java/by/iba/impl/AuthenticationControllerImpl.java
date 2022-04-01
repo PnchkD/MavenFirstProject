@@ -3,12 +3,10 @@ package by.iba.impl;
 import by.iba.AuthenticationController;
 import by.iba.RecoveryCodeService;
 import by.iba.UserService;
-import by.iba.dto.req.UserPasswordRecoveryReqDTO;
+import by.iba.dto.req.UserCredentialsReqDTO;
 import by.iba.dto.resp.AccessTokenDTO;
-import by.iba.dto.resp.SuccessfulDTO;
-import by.iba.dto.req.UserAuthReqDTO;
-import by.iba.dto.req.UserRegistrationReqDTO;
-import by.iba.exception.AbstractInternalApplicationException;
+import by.iba.dto.resp.RespStatusDTO;
+import by.iba.dto.req.UserReqDTO;
 import by.iba.filter.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -28,21 +26,25 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     private final JwtUtil jwtUtil;
 
     @Override
-    public ResponseEntity<SuccessfulDTO> registerUser(@RequestBody UserRegistrationReqDTO userRegistrationInDTO) {
+    public ResponseEntity<RespStatusDTO> registerUser(@RequestBody UserReqDTO userReqDTO) {
 
-        userService.registerUser(userRegistrationInDTO);
+        if(!userService.registerUser(userReqDTO)) {
+            return ResponseEntity
+                    .status(400)
+                    .body(new RespStatusDTO("USER_HAS_BEEN_ALREADY_REGISTERED"));
+        }
 
         return ResponseEntity
                 .status(201)
-                .body(new SuccessfulDTO("Registration is successful"));
+                .body(new RespStatusDTO("REGISTRATION_IS_SUCCESSFUL"));
 
     }
 
     @Override
-    public ResponseEntity<AccessTokenDTO> login(@RequestBody UserAuthReqDTO userAuthReqDTO) {
+    public ResponseEntity<AccessTokenDTO> login(@RequestBody UserReqDTO UserReqDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userAuthInDTO.getLogin(),
-                userAuthInDTO.getPassword()
+                UserReqDTO.getLogin(),
+                UserReqDTO.getPassword()
         );
 
         authenticationManager.authenticate(authenticationToken);
@@ -50,38 +52,46 @@ public class AuthenticationControllerImpl implements AuthenticationController {
         return ResponseEntity
                 .ok()
                 .body(objectMapper.convertValue(
-                        jwtUtil.generateToken(userService.login(userAuthReqDTO)
+                        jwtUtil.generateToken(userService.login(UserReqDTO)
                         ), AccessTokenDTO.class));
     }
 
 
     @Override
-    public ResponseEntity<SuccessfulDTO> passwordRecoveryWithEmail(@RequestBody UserPasswordRecoveryReqDTO userPasswordRecoveryInDTO){
-        recoveryCodeService.sendRecoveryCode(userPasswordRecoveryInDTO);
+    public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO){
+        recoveryCodeService.sendRecoveryCode(userCredentialsReqDTO);
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("Check your email"));
+                .body(new RespStatusDTO("CHECK_YOUR_EMAIL"));
     }
 
     @Override
-    public ResponseEntity<SuccessfulDTO> checkRecoveryCode(@PathVariable String code) {
+    public ResponseEntity<RespStatusDTO> checkRecoveryCode(@PathVariable String code) {
+
         if(!recoveryCodeService.checkRecoveryCode(code)){
-            throw new AbstractInternalApplicationException("RECOVERY_CODE_IS_INVALID");
+            return ResponseEntity
+                    .status(400)
+                    .body(new RespStatusDTO("INVALID_RECOVERY_CODE"));
         }
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("Enter your new password"));
+                .body(new RespStatusDTO("ENTER_YOUR_NEW_PASSWORD"));
     }
 
     @Override
-    public ResponseEntity<SuccessfulDTO> updateUserPassword(@RequestBody UserPasswordRecoveryReqDTO userPasswordRecoveryReqDTO) {
-        userService.recoverPassword(userPasswordRecoveryReqDTO);
+    public ResponseEntity<RespStatusDTO> updateUserPassword(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO) {
+
+        if(!userService.recoverPassword(userCredentialsReqDTO)) {
+            return ResponseEntity
+                    .status(400)
+                    .body(new RespStatusDTO("INVALID_CREDENTIALS"));
+        }
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("Your password is changed!"));
+                .body(new RespStatusDTO("PASSWORD_WAS_CHANGED"));
     }
 
 }

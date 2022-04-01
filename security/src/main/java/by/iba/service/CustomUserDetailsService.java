@@ -1,18 +1,19 @@
 package by.iba.service;
 
-import by.iba.entity.user.UserRole;
+import by.iba.exception.UserNotFoundException;
 import by.iba.repository.UserRepository;
 import by.iba.entity.user.UserEntity;
-import by.iba.repository.UserRolesRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -21,16 +22,18 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        Optional<UserEntity> myUser = userRepository.findByLogin(userName);
+        UserEntity user = userRepository.findByLogin(userName)
+                .orElseThrow(UserNotFoundException::new);
 
-        if (myUser.isEmpty()) {
-            throw new UsernameNotFoundException("Unknown user: "+userName);
-        }
-        UserDetails user = User.builder()
-                .username(myUser.get().getLogin())
-                .password(myUser.get().getPassword())
-                .roles(myUser.get().getRoles().toArray(new String[myUser.get().getRoles().size()]))
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+
+        UserDetails userDetails = User.builder()
+                .username(user.getLogin())
+                .password(user.getPassword())
+                .authorities(authorities)
+                //.roles(authorities.toString())
                 .build();
-        return user;
+        return userDetails;
     }
 }

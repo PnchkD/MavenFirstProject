@@ -2,15 +2,11 @@ package by.iba.impl;
 
 import by.iba.UserController;
 import by.iba.UserService;
-import by.iba.dto.req.UserChangeAvatarReqDTO;
-import by.iba.dto.req.UserChangeCredentialsReqDTO;
-import by.iba.dto.req.UserChangePersonalDataReqDTO;
-import by.iba.dto.resp.SuccessfulDTO;
+import by.iba.dto.req.UserReqDTO;
+import by.iba.dto.req.UserCredentialsReqDTO;
+import by.iba.dto.resp.RespStatusDTO;
 import by.iba.dto.resp.UserDTO;
-import by.iba.entity.user.UserEntity;
-import by.iba.exception.UserNotFoundException;
 import lombok.AllArgsConstructor;
-import by.iba.mapper.UserMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +27,9 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserChangePersonalDataReqDTO userChangingInDTO) {
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserReqDTO userReqDTO) {
 
-        UserDTO user = userService.update(id, userChangingInDTO);
+        UserDTO user = userService.update(id, userReqDTO);
 
         return ResponseEntity
                 .ok()
@@ -41,23 +37,27 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<SuccessfulDTO> updateAvatar(@PathVariable Long id, @RequestBody UserChangeAvatarReqDTO userChangeAvatarInDTO) {
+    public ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestBody UserReqDTO userReqDTO) {
 
-        userService.updateAvatar(id, userChangeAvatarInDTO);
+        userService.updateAvatar(id, userReqDTO);
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("User avatar was changed"));
+                .body(new RespStatusDTO("User avatar was changed"));
     }
 
     @Override
-    public ResponseEntity<SuccessfulDTO> updatePassword(@PathVariable Long id, @RequestBody UserChangeCredentialsReqDTO userChangeCredentialsInDTO) {
+    public ResponseEntity<RespStatusDTO> updatePassword(@PathVariable Long id, @RequestBody UserCredentialsReqDTO userCredentialsReqDTO) {
 
-        userService.updatePassword(id, userChangeCredentialsInDTO);
+        if(!userService.updatePassword(id, userCredentialsReqDTO)) {
+            return ResponseEntity
+                    .status(400)
+                    .body(new RespStatusDTO("INVALID_CREDENTIALS"));
+        }
 
         return ResponseEntity
                 .ok()
-                .body(new SuccessfulDTO("User password was changed"));
+                .body(new RespStatusDTO("User password was changed"));
     }
 
 }

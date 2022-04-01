@@ -1,12 +1,10 @@
 package by.iba;
 
-import by.iba.dto.req.UserChangeAvatarReqDTO;
-import by.iba.dto.req.UserChangeCredentialsReqDTO;
-import by.iba.dto.req.UserChangePersonalDataReqDTO;
-import by.iba.dto.resp.SuccessfulDTO;
+import by.iba.dto.req.UserReqDTO;
+import by.iba.dto.req.UserCredentialsReqDTO;
+import by.iba.dto.resp.RespStatusDTO;
 import by.iba.dto.resp.UserDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping(path = "/api/v1/users")
@@ -16,12 +14,12 @@ public interface UserController {
     ResponseEntity<UserDTO> getUserById(@PathVariable Long id);
 
     @PutMapping("/{id}")
-    ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserChangePersonalDataReqDTO userChangingInDTO);
+    ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserReqDTO userReqDTO);
 
-    @PutMapping("/{id}/avatar")
-    ResponseEntity<SuccessfulDTO> updateAvatar(@PathVariable Long id, @RequestBody UserChangeAvatarReqDTO userChangeAvatarInDTO);
+    @PatchMapping("/{id}/avatar")
+    ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestBody UserReqDTO userReqDTO);
 
-    @PutMapping("/{id}/credentials")
-    ResponseEntity<SuccessfulDTO> updatePassword(@PathVariable Long id, @RequestBody UserChangeCredentialsReqDTO userChangeCredentialsInDTO);
+    @PatchMapping("/{id}/credentials")
+    ResponseEntity<RespStatusDTO> updatePassword(@PathVariable Long id, @RequestBody UserCredentialsReqDTO userCredentialsReqDTO);
 
 }

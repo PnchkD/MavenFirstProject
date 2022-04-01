@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SuccessfulDTO {
+public class RespStatusDTO {
     private String message;
 }

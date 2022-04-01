@@ -1,14 +1,13 @@
 package by.iba.dto.resp;
 
 import by.iba.dto.AbstractDTO;
-import by.iba.entity.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +17,7 @@ public class UserDTO extends AbstractDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private Set<UserRole> roles;
+    private List<UserRoleDTO> roles;
     private String avatar;
     private LocalDateTime dateOfLastLogin;
     private LocalDateTime dateOfApproved;

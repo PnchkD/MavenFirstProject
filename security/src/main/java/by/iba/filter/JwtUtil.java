@@ -1,8 +1,6 @@
 package by.iba.filter;
 
-import by.iba.UserRolesService;
 import by.iba.entity.user.UserEntity;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +18,6 @@ public class JwtUtil {
     public static final String TOKEN_TYPE = "Bearer";
     public static final String SPACE = " ";
     public static final String BEARER_PREFIX = TOKEN_TYPE + SPACE;
-
-    private final UserRolesService userRolesService;
 
     @Value("${security-token-app.auth.accessTokenSecret}")
     private String secretKey;
@@ -51,7 +47,7 @@ public class JwtUtil {
 /*        String rolePrefix = "ROLE_";
         Claims claims = Jwts.claims()
                 .setSubject(user.getLogin());
-        claims.put("role", rolePrefix + userRolesService.findByUserId(user.getId()));
+        claims.put("roles", rolePrefix + user.getRoles());
         claims.put("id", user.getId());*/
 
         Date currentDate = new Date();
@@ -59,7 +55,7 @@ public class JwtUtil {
 
         String accessToken = Jwts.builder()
                 //.setClaims(claims)
-                .setSubject(Long.toString(user.getId()))
+                .setSubject(user.getLogin())
                 .setIssuedAt(currentDate)
                 .setExpiration(expiration)
                 .signWith(SignatureAlgorithm.HS512, secretKey)

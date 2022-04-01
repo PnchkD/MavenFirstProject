@@ -1,10 +1,9 @@
 package by.iba;
 
-import by.iba.dto.req.UserAuthReqDTO;
-import by.iba.dto.req.UserPasswordRecoveryReqDTO;
-import by.iba.dto.req.UserRegistrationReqDTO;
+import by.iba.dto.req.UserReqDTO;
+import by.iba.dto.req.UserCredentialsReqDTO;
 import by.iba.dto.resp.AccessTokenDTO;
-import by.iba.dto.resp.SuccessfulDTO;
+import by.iba.dto.resp.RespStatusDTO;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +12,18 @@ import org.springframework.web.bind.annotation.*;
 public interface AuthenticationController {
 
     @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<SuccessfulDTO> registerUser(@RequestBody UserRegistrationReqDTO userRegistrationInDTO);
+    ResponseEntity<RespStatusDTO> registerUser(@RequestBody UserReqDTO userRegistrationInDTO);
 
     @PostMapping()
-    ResponseEntity<AccessTokenDTO> login(@RequestBody UserAuthReqDTO userAuthInDTO);
+    ResponseEntity<AccessTokenDTO> login(@RequestBody UserReqDTO userAuthInDTO);
 
     @GetMapping("/password_recovery")
-    ResponseEntity<SuccessfulDTO> passwordRecoveryWithEmail(@RequestBody UserPasswordRecoveryReqDTO userPasswordRecoveryInDTO);
+    ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO);
 
     @GetMapping("/password_recovery/{code}")
-    ResponseEntity<SuccessfulDTO> checkRecoveryCode(@PathVariable String code);
+    ResponseEntity<RespStatusDTO> checkRecoveryCode(@PathVariable String code);
 
     @PutMapping("/password_recovery")
-    ResponseEntity<SuccessfulDTO> updateUserPassword(@RequestBody UserPasswordRecoveryReqDTO userPasswordRecoveryReqDTO);
+    ResponseEntity<RespStatusDTO> updateUserPassword(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO);
 
 }

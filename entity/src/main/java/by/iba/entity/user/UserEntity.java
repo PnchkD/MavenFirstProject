@@ -1,8 +1,9 @@
 package by.iba.entity.user;
 
 import by.iba.entity.AbstractEntity;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +12,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class UserEntity extends AbstractEntity {
 
@@ -27,7 +29,7 @@ public class UserEntity extends AbstractEntity {
     @Column(name = "password",  length = 256)
     private String password;
 
-    @Column(name = "email", length = 128, unique = true)
+    @Column(name = "email", length = 128)
     private String email;
 
     @ManyToMany(fetch = FetchType.EAGER)
