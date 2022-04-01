@@ -29,7 +29,7 @@ public class UserMapper {
         if(Objects.nonNull(user.getAvatar())) {
             userDTO.setAvatar(user.getAvatar().getImageUrl());
         }
-        userDTO.setRole(userRolesService.findByUserId(user.getId()).getName());
+
         return userDTO;
     }
 
@@ -66,8 +66,8 @@ public class UserMapper {
     }
 
     public void fillFromInDTO(UserEntity user, UserChangeRoleReqDTO userChangeRoleInDTO) {
-        if (Objects.nonNull(userChangeRoleInDTO.getRole())) {
-            user.getRoles().add(userRolesService.createRole(userChangeRoleInDTO.getRole(), user.getId()));
+        if (!userChangeRoleInDTO.getRoles().isEmpty()) {
+            user.setRoles(userChangeRoleInDTO.getRoles());
         }
     }
 

@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(UserNotFoundException::new);
 
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-        userDTO.setRole(userRolesService.findByUserId(id).getName());
 
         return userDTO;
     }
@@ -92,14 +91,13 @@ public class UserServiceImpl implements UserService {
         UserEntity user = objectMapper.convertValue(userRegistrationReqDTO, UserEntity.class);
         user.setAvatar(new Photo(userRegistrationReqDTO.getImage()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.getRoles().add(userRolesService.findByName(STANDARD_ROLE));
 
         if (userRepository.findByLogin(user.getLogin()).isPresent()) {
             throw new UserHasBeenAlreadyRegisteredException();
         }
 
         userRepository.save(user);
-        Long userId = userRepository.findByLogin(user.getLogin()).orElseThrow(UserNotFoundException::new).getId();
-        userRolesService.createRole(STANDARD_ROLE, userId);
 
         emailService.sendEmail(user.getEmail(), "Welcome!", "Your registration is successful!");
 
@@ -135,7 +133,6 @@ public class UserServiceImpl implements UserService {
         save(user);
 
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-        userDTO.setRole(userRolesService.findByUserId(id).getName());
 
         return userDTO;
     }

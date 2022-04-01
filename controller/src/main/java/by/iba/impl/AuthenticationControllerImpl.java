@@ -33,13 +33,13 @@ public class AuthenticationControllerImpl implements AuthenticationController {
         userService.registerUser(userRegistrationInDTO);
 
         return ResponseEntity
-                .ok()
+                .status(201)
                 .body(new SuccessfulDTO("Registration is successful"));
 
     }
 
     @Override
-    public ResponseEntity<AccessTokenDTO> login(@RequestBody UserAuthReqDTO userAuthInDTO) {
+    public ResponseEntity<AccessTokenDTO> login(@RequestBody UserAuthReqDTO userAuthReqDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 userAuthInDTO.getLogin(),
                 userAuthInDTO.getPassword()
@@ -50,7 +50,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
         return ResponseEntity
                 .ok()
                 .body(objectMapper.convertValue(
-                        jwtUtil.generateToken(userService.login(userAuthInDTO)
+                        jwtUtil.generateToken(userService.login(userAuthReqDTO)
                         ), AccessTokenDTO.class));
     }
 

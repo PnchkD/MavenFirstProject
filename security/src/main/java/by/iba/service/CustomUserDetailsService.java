@@ -12,25 +12,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserRolesRepository userRolesRepository;
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         Optional<UserEntity> myUser = userRepository.findByLogin(userName);
-        Optional<UserRole> userRole = userRolesRepository.findByUserId(myUser.get().getId());
 
-        if (myUser.isEmpty() || userRole.isEmpty()) {
+        if (myUser.isEmpty()) {
             throw new UsernameNotFoundException("Unknown user: "+userName);
         }
         UserDetails user = User.builder()
                 .username(myUser.get().getLogin())
                 .password(myUser.get().getPassword())
-                .roles(userRole.get().getName())
+                .roles(myUser.get().getRoles().toArray(new String[myUser.get().getRoles().size()]))
                 .build();
         return user;
     }

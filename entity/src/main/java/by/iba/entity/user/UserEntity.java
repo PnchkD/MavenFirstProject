@@ -30,8 +30,10 @@ public class UserEntity extends AbstractEntity {
     @Column(name = "email", length = 128, unique = true)
     private String email;
 
-    @OneToMany
-    @JoinColumn(name = "user_id", referencedColumnName="id")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<UserRole> roles = new HashSet<>();
 
     @Column(name = "avatar")

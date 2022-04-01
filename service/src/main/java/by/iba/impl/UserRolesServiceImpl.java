@@ -18,30 +18,9 @@ public class UserRolesServiceImpl implements UserRolesService {
 
     @Override
     @Transactional(readOnly = true)
-    public UserRole findByName(String login) {
-        return userRolesRepository.findByName("ADMIN")
+    public UserRole findByName(String name) {
+        return userRolesRepository.findByName(name)
                 .orElseThrow(UserRoleNotFoundException::new);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public UserRole findByUserId(Long id) {
-        return userRolesRepository.findByUserId(id)
-                .orElseThrow(UserRoleNotFoundException::new);
-    }
-
-    @Override
-    @Transactional
-    public UserRole createRole(String role, Long id) {
-
-        UserRole userRole = new UserRole();
-        userRole.setName(role);
-        userRole.setUserId(id);
-        userRole.setDateOfCreation(LocalDateTime.now());
-        userRole.setDateOfLastUpdate(LocalDateTime.now());
-
-        userRolesRepository.save(userRole);
-        return userRole;
     }
 
 }
