@@ -6,6 +6,6 @@ public interface RecoveryCodeService {
 
     void sendRecoveryCode(UserCredentialsReqDTO userCredentialsReqDTO);
 
-    boolean checkRecoveryCode(String code);
+    void checkRecoveryCode(String code);
 
 }

@@ -2,9 +2,9 @@ package by.iba.exception;
 
 import org.springframework.security.authentication.AccountStatusException;
 
-public class UserHasBeenBanned extends AccountStatusException {
+public class UserHasBeenBannedException extends AccountStatusException {
 
-    public UserHasBeenBanned(String msg) {
+    public UserHasBeenBannedException(String msg) {
         super(msg);
     }
 

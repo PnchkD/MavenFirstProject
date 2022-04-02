@@ -26,8 +26,7 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <java.version>11</java.version>
         <modelmapper.version>3.0.0</modelmapper.version>
         <models.version>1.0.0</models.version>
         <postgre.version>42.3.3</postgre.version>
@@ -53,7 +52,7 @@
             </dependency>
             <dependency>
                 <groupId>org.example</groupId>
-                <artifactId>repository</artifactId>
+                <artifactId>controller</artifactId>
                 <version>${models.version}</version>
             </dependency>
             <dependency>

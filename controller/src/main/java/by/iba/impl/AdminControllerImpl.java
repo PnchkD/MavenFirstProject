@@ -28,11 +28,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public ResponseEntity<RespStatusDTO> banUser(@PathVariable Long id) {
 
-        if(!userService.banUser(id, true)) {
-            return ResponseEntity
-                    .status(400)
-                    .body(new RespStatusDTO("ADMIN_CANNOT_BAN_HIMSELF"));
-        }
+        userService.banUser(id, true);
 
         return ResponseEntity
                 .ok()
@@ -41,6 +37,7 @@ public class AdminControllerImpl implements AdminController {
 
     @Override
     public ResponseEntity<RespStatusDTO> unbanUser(@PathVariable Long id) {
+
         userService.banUser(id, false);
 
         return ResponseEntity
@@ -61,11 +58,7 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public ResponseEntity<RespStatusDTO> updateUserRole(@PathVariable Long id, @RequestBody UserRolesReqDTO userChangeRoleInDTO) {
 
-        if(!userService.updateUserRole(id, userChangeRoleInDTO)) {
-            ResponseEntity
-                    .status(400)
-                    .body(new RespStatusDTO("USER_MUST_HAVE_A_ROLE"));
-        }
+        userService.updateUserRole(id, userChangeRoleInDTO);
 
         return ResponseEntity
                 .ok()

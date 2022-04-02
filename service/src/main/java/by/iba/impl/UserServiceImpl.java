@@ -61,36 +61,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO save(UserEntity user) {
-        if (Objects.isNull(user.getId())) {
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            user.getRoles().add(new UserRole());
-            user.setDateOfCreation(LocalDateTime.now());
-        }
-
-        user.setDateOfLastUpdate(LocalDateTime.now());
-        userRepository.save(user);
-
-        return userMapper.fillFromInDTO(user);
-    }
-
-    @Override
-    @Transactional
-    public boolean registerUser(UserReqDTO userReqDTO) {
+    public UserDTO save(UserReqDTO userReqDTO) {
         UserEntity user = objectMapper.convertValue(userReqDTO, UserEntity.class);
         user.setAvatar(new Photo(userReqDTO.getImage()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.getRoles().add(userRolesService.findByName(STANDARD_ROLE));
 
         if (userRepository.findByLogin(user.getLogin()).isPresent()) {
-            return false;
+            throw new UserIsAlreadyExistException();
         }
 
         userRepository.save(user);
 
         emailService.sendEmail(user.getEmail(), "Welcome!", "Your registration is successful!");
 
-        return true;
+        return userMapper.fillFromInDTO(user);
     }
 
     @Override
@@ -99,10 +84,10 @@ public class UserServiceImpl implements UserService {
 
         String login = UserReqDTO.getLogin();
         UserEntity user = userRepository.findByLogin(login)
-                .orElseThrow(() -> new BadCredentialsException("User hasn't been found"));
+                .orElseThrow(() -> new BadCredentialsException("BAD_CREDENTIALS"));
 
         if (Objects.nonNull(user.getBannedDate())) {
-            throw new UserHasBeenBanned("User account is disabled.");
+            throw new UserHasBeenBannedException("User account is disabled.");
         }
 
         user.setDateOfLastLogin(LocalDateTime.now());
@@ -119,21 +104,22 @@ public class UserServiceImpl implements UserService {
 
         userMapper.fillFromInDTO(user, userReqDTO);
 
-        save(user);
+        user.setDateOfLastUpdate(LocalDateTime.now());
+        userRepository.save(user);
 
         return userMapper.fillFromInDTO(user);
     }
 
     @Override
     @Transactional
-    public boolean banUser(Long id, boolean verdict) {
+    public UserDTO banUser(Long id, boolean verdict) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
         if(verdict) {
 
             if(user.getRoles().contains(userRolesService.findByName("ADMIN"))) {
-                return false;
+                throw new InvalidBanException();
             }
 
             user.setBannedDate(LocalDateTime.now());
@@ -144,7 +130,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         }
 
-        return true;
+        return userMapper.fillFromInDTO(user);
     }
 
     @Override
@@ -160,7 +146,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public boolean updatePassword(Long id, UserCredentialsReqDTO userChangeCredentialsReqDTO) {
+    public void updatePassword(Long id, UserCredentialsReqDTO userChangeCredentialsReqDTO) {
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
@@ -168,7 +154,7 @@ public class UserServiceImpl implements UserService {
         if(!userChangeCredentialsReqDTO.getNewPassword().equals(userChangeCredentialsReqDTO.getConfirmedPassword())
                 && !user.getPassword().equals(bCryptPasswordEncoder.encode(userChangeCredentialsReqDTO.getOldPassword()))
                 && Objects.isNull(userChangeCredentialsReqDTO.getNewPassword())) {
-            return false;
+            throw new BadCredentialsException("BAD_CREDENTIALS");
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(userChangeCredentialsReqDTO.getNewPassword()));
@@ -176,7 +162,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        return true;
     }
 
     @Override
@@ -187,17 +172,18 @@ public class UserServiceImpl implements UserService {
 
         userMapper.fillFromInDTO(user, userReqDTO);
 
-        save(user);
+        user.setDateOfLastUpdate(LocalDateTime.now());
+        userRepository.save(user);
     }
 
     @Override
     @Transactional
-    public boolean updateUserRole(Long id, UserRolesReqDTO userRolesReqDTO) {
+    public void updateUserRole(Long id, UserRolesReqDTO userRolesReqDTO) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
         if (userRolesReqDTO.getRoles().isEmpty()) {
-           return false;
+           throw new UserRoleNotFoundException();
         }
 
         Set<UserRole> roles = new HashSet<>();
@@ -209,19 +195,20 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRoles(roles);
-        save(user);
-        return true;
+        user.setDateOfLastUpdate(LocalDateTime.now());
+        userRepository.save(user);
+
     }
 
     @Override
     @Transactional
-    public boolean recoverPassword(UserCredentialsReqDTO userCredentialsReqDTO) {
+    public void recoverPassword(UserCredentialsReqDTO userCredentialsReqDTO) {
         UserEntity user = userRepository.findByLogin(userCredentialsReqDTO.getLogin())
                 .orElseThrow(UserNotFoundException::new);
 
         if(!userCredentialsReqDTO.getNewPassword().equals(userCredentialsReqDTO.getConfirmedPassword())
                 && userCredentialsReqDTO.getNewPassword() != null){
-            return false;
+            throw new BadCredentialsException("BAD_CREDENTIALS");
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(userCredentialsReqDTO.getNewPassword()));
@@ -229,7 +216,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        return true;
     }
 
 }

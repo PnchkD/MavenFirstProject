@@ -4,7 +4,7 @@ import by.iba.RecoveryCodeService;
 import by.iba.dto.req.UserCredentialsReqDTO;
 import by.iba.entity.user.RecoveryCode;
 import by.iba.entity.user.UserEntity;
-import by.iba.exception.RecoveryCodeNotFound;
+import by.iba.exception.RecoveryCodeNotFoundException;
 import by.iba.exception.UserNotFoundException;
 import by.iba.repository.RecoveryCodeRepository;
 import by.iba.repository.UserRepository;
@@ -39,11 +39,14 @@ public class RecoveryCodeImpl implements RecoveryCodeService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean checkRecoveryCode(String code) {
+    public void checkRecoveryCode(String code) {
         RecoveryCode recoveryCode = recoveryCodeRepository.findByRecoveryCode(code)
-                .orElseThrow(RecoveryCodeNotFound::new);
+                .orElseThrow(RecoveryCodeNotFoundException::new);
 
-        return code.equals(recoveryCode.getRecoveryCode());
+        if(!code.equals(recoveryCode.getRecoveryCode())) {
+            throw new RecoveryCodeNotFoundException();
+        }
+
     }
 
 }

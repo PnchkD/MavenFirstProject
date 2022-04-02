@@ -12,24 +12,22 @@ public interface UserService {
 
     UserDTO findById(Long id);
 
-    UserDTO save(UserEntity user);
-
-    boolean registerUser(UserReqDTO userReqDTO);
+    UserDTO save(UserReqDTO userReqDTO);
 
     UserEntity login(UserReqDTO userReqDTO);
 
     UserDTO update(Long id, UserReqDTO userReqDTO);
 
-    boolean banUser(Long id, boolean verdict);
+    UserDTO banUser(Long id, boolean verdict);
 
     void confirmUser(Long id);
 
-    boolean updatePassword(Long id, UserCredentialsReqDTO userCredentialsReqDTO);
+    void updatePassword(Long id, UserCredentialsReqDTO userCredentialsReqDTO);
 
     void updateAvatar(Long id, UserReqDTO userReqDTO);
 
-    boolean updateUserRole(Long id, UserRolesReqDTO userRolesReqDTO);
+    void updateUserRole(Long id, UserRolesReqDTO userRolesReqDTO);
 
-    boolean recoverPassword(UserCredentialsReqDTO userCredentialsReqDTO);
+    void recoverPassword(UserCredentialsReqDTO userCredentialsReqDTO);
 
 }

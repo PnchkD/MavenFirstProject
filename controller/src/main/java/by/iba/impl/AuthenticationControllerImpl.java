@@ -28,11 +28,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     @Override
     public ResponseEntity<RespStatusDTO> registerUser(@RequestBody UserReqDTO userReqDTO) {
 
-        if(!userService.registerUser(userReqDTO)) {
-            return ResponseEntity
-                    .status(400)
-                    .body(new RespStatusDTO("USER_HAS_BEEN_ALREADY_REGISTERED"));
-        }
+        userService.save(userReqDTO);
 
         return ResponseEntity
                 .status(201)
@@ -59,6 +55,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
 
     @Override
     public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO){
+
         recoveryCodeService.sendRecoveryCode(userCredentialsReqDTO);
 
         return ResponseEntity
@@ -69,11 +66,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     @Override
     public ResponseEntity<RespStatusDTO> checkRecoveryCode(@PathVariable String code) {
 
-        if(!recoveryCodeService.checkRecoveryCode(code)){
-            return ResponseEntity
-                    .status(400)
-                    .body(new RespStatusDTO("INVALID_RECOVERY_CODE"));
-        }
+        recoveryCodeService.checkRecoveryCode(code);
 
         return ResponseEntity
                 .ok()
@@ -83,11 +76,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     @Override
     public ResponseEntity<RespStatusDTO> updateUserPassword(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO) {
 
-        if(!userService.recoverPassword(userCredentialsReqDTO)) {
-            return ResponseEntity
-                    .status(400)
-                    .body(new RespStatusDTO("INVALID_CREDENTIALS"));
-        }
+        userService.recoverPassword(userCredentialsReqDTO);
 
         return ResponseEntity
                 .ok()

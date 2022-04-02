@@ -49,11 +49,7 @@ public class UserControllerImpl implements UserController {
     @Override
     public ResponseEntity<RespStatusDTO> updatePassword(@PathVariable Long id, @RequestBody UserCredentialsReqDTO userCredentialsReqDTO) {
 
-        if(!userService.updatePassword(id, userCredentialsReqDTO)) {
-            return ResponseEntity
-                    .status(400)
-                    .body(new RespStatusDTO("INVALID_CREDENTIALS"));
-        }
+        userService.updatePassword(id, userCredentialsReqDTO);
 
         return ResponseEntity
                 .ok()
