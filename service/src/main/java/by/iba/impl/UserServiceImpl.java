@@ -151,9 +151,9 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
-        if(!userChangeCredentialsReqDTO.getNewPassword().equals(userChangeCredentialsReqDTO.getConfirmedPassword())
-                && !user.getPassword().equals(bCryptPasswordEncoder.encode(userChangeCredentialsReqDTO.getOldPassword()))
-                && Objects.isNull(userChangeCredentialsReqDTO.getNewPassword())) {
+        if(Objects.isNull(userChangeCredentialsReqDTO.getNewPassword())
+                || (user.getPassword()).equals(bCryptPasswordEncoder.encode(userChangeCredentialsReqDTO.getOldPassword()))
+                || !userChangeCredentialsReqDTO.getNewPassword().equals(userChangeCredentialsReqDTO.getConfirmedPassword())) {
             throw new BadCredentialsException("BAD_CREDENTIALS");
         }
 
