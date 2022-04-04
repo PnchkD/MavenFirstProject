@@ -32,6 +32,8 @@
         <models.version>1.0.0</models.version>
         <postgre.version>42.3.3</postgre.version>
         <jwt.version>0.9.1</jwt.version>
+        <jakarta.version>2.0.2</jakarta.version>
+        <lombok.version>1.18.22</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -89,7 +91,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
         </dependency>
     </dependencies>
 

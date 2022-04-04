@@ -1,6 +1,7 @@
 package by.iba.impl;
 
 import by.iba.AuthenticationController;
+import by.iba.ControllerHelper;
 import by.iba.RecoveryCodeService;
 import by.iba.UserService;
 import by.iba.dto.req.UserCredentialsReqDTO;
@@ -13,10 +14,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
+@Validated
 public class AuthenticationControllerImpl implements AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
@@ -26,7 +30,8 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     private final JwtUtil jwtUtil;
 
     @Override
-    public ResponseEntity<RespStatusDTO> registerUser(@RequestBody UserReqDTO userReqDTO) {
+    public ResponseEntity<RespStatusDTO> registerUser(UserReqDTO userReqDTO, BindingResult bindingResult) {
+        ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
         userService.save(userReqDTO);
 
@@ -37,7 +42,9 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     }
 
     @Override
-    public ResponseEntity<AccessTokenDTO> login(@RequestBody UserReqDTO UserReqDTO) {
+    public ResponseEntity<AccessTokenDTO> login(UserReqDTO UserReqDTO, BindingResult bindingResult) {
+        ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
+
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 UserReqDTO.getLogin(),
                 UserReqDTO.getPassword()
@@ -54,7 +61,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
 
 
     @Override
-    public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO){
+    public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(UserCredentialsReqDTO userCredentialsReqDTO){
 
         recoveryCodeService.sendRecoveryCode(userCredentialsReqDTO);
 
@@ -64,7 +71,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> checkRecoveryCode(@PathVariable String code) {
+    public ResponseEntity<RespStatusDTO> checkRecoveryCode(String code) {
 
         recoveryCodeService.checkRecoveryCode(code);
 
@@ -74,7 +81,8 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> updateUserPassword(@RequestBody UserCredentialsReqDTO userCredentialsReqDTO) {
+    public ResponseEntity<RespStatusDTO> updateUserPassword(UserCredentialsReqDTO userCredentialsReqDTO, BindingResult bindingResult) {
+        ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
         userService.recoverPassword(userCredentialsReqDTO);
 

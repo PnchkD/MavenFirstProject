@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO save(UserReqDTO userReqDTO) {
+        //validUser(userReqDTO);
         UserEntity user = objectMapper.convertValue(userReqDTO, UserEntity.class);
         user.setAvatar(new Photo(userReqDTO.getImage()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -99,6 +100,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO update(Long id, UserReqDTO userReqDTO) {
+        //validUser(userReqDTO);
+
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -151,7 +154,10 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
-        if(Objects.isNull(userChangeCredentialsReqDTO.getNewPassword())
+        if(Objects.isNull(userChangeCredentialsReqDTO.getLogin())
+                || Objects.isNull(userChangeCredentialsReqDTO.getNewPassword())
+                || Objects.isNull(userChangeCredentialsReqDTO.getOldPassword())
+                || Objects.isNull(userChangeCredentialsReqDTO.getConfirmedPassword())
                 || (user.getPassword()).equals(bCryptPasswordEncoder.encode(userChangeCredentialsReqDTO.getOldPassword()))
                 || !userChangeCredentialsReqDTO.getNewPassword().equals(userChangeCredentialsReqDTO.getConfirmedPassword())) {
             throw new BadCredentialsException("BAD_CREDENTIALS");
@@ -217,5 +223,20 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
     }
+
+/*    private void validUser(UserReqDTO userReqDTO) {
+        if(Objects.isNull(userReqDTO.getLogin())
+            || Objects.isNull(userReqDTO.getPassword())
+            || Objects.isNull(userReqDTO.getFirstName())
+            || Objects.isNull(userReqDTO.getLastName())
+            || Objects.isNull(userReqDTO.getEmail())
+            || !validEmail(userReqDTO.getEmail())) {
+            throw new InvalidRegistrationDataException();
+        }
+    }
+
+    private boolean validEmail(String email) {
+        return email.contains("@") && email.contains(".");
+    }*/
 
 }

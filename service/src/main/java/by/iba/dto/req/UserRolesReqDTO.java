@@ -1,17 +1,18 @@
 package by.iba.dto.req;
 
 import by.iba.dto.resp.UserRoleDTO;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRolesReqDTO {
 
+    @Valid
     private List<UserRoleDTO> roles;
 
 }
