@@ -10,7 +10,7 @@
 
     <parent>
         <groupId>org.example</groupId>
-        <artifactId>MultiModuleProject</artifactId>
+        <artifactId>automotive_selection</artifactId>
         <version>1.0.0</version>
     </parent>
 

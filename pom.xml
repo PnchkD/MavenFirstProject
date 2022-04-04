@@ -12,9 +12,10 @@
     </parent>
 
     <groupId>org.example</groupId>
-    <artifactId>MultiModuleProject</artifactId>
+    <artifactId>automotive_selection</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
+    <name>automotive-selection</name>
 
     <modules>
         <module>controller</module>
@@ -88,6 +89,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.22</version>
         </dependency>
     </dependencies>
 

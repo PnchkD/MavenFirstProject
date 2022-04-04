@@ -7,9 +7,9 @@ spring:
     initialization-mode: always
     ##################### MY SQL DATABASE #################################
     #url: jdbc:postgresql://automotive_selection_db_postgres:5432/automotive_selection
-    url: jdbc:postgresql://localhost:5432/automotive_selection
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://automotive_selection_db_postgres:5432/automotive_selection
+    username: automotive_selection_app
+    password: automotive_selection_pw
   ##################### JPA USED SPRING DATA #################################
   jpa:
     hibernate:

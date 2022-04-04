@@ -22,22 +22,22 @@ COPY service/pom.xml ./service
 COPY pom.xml .
 
 #resolve maven dependencies, select settings and profile
-RUN mvn -s settings.xml -P panteontrans-maven-central-store clean package -Dmaven.test.skip -Dmaven.main.skip -Dspring-boot.repackage.skip && rm -r automotive_selection/target/
+RUN mvn -s settings.xml clean package -Dmaven.test.skip -Dmaven.main.skip -Dspring-boot.repackage.skip && rm -r controller/target/
 
 # build the app (no dependency download here)
-RUN mvn -s settings.xml -P panteontrans-maven-central-store clean package  -Dmaven.test.skip
+RUN mvn -s settings.xml clean package  -Dmaven.test.skip
 
 # split the built app into multiple layers to improve layer rebuild
-RUN mkdir -p target/docker-packaging && cd target/docker-packaging && jar -xf /app/automotive_selection/target/automotive_selection*.jar
+RUN mkdir -p target/docker-packaging && cd target/docker-packaging && jar -xf /app/controller/target/controller*.jar
 
-FROM openjdk:11
+FROM openjdk:11.0-jre
 
 WORKDIR /app
 
-COPY --from=maven_build /app/automotive_selection/target/automotive_selection*.jar .
+COPY --from=maven_build /app/controller/target/controller*.jar .
 
-CMD [ "java", "-jar","./automotive_selection.jar" ]
+CMD [ "java", "-jar","./controller.jar" ]
 
-HEALTHCHECK --interval=30s --timeout=30s CMD curl -f http://localhost:8080/api/account-service/actuator/health || exit 1
+# HEALTHCHECK --interval=30s --timeout=30s CMD curl -f http://localhost:8080/api/automotive_selection/actuator/health || exit 1
 
 EXPOSE 8080:8080
