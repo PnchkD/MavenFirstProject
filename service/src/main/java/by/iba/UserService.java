@@ -14,9 +14,9 @@ public interface UserService {
 
     UserDTO save(UserReqDTO userReqDTO);
 
-    UserEntity login(UserReqDTO userReqDTO);
+    UserEntity login(UserAuthReqDTO userAuthReqDTO);
 
-    UserDTO update(Long id, UserReqDTO userReqDTO);
+    UserDTO update(Long id, UserPersonalDataReqDTO userPersonalDataReqDTO);
 
     UserDTO banUser(Long id, boolean verdict);
 
@@ -24,10 +24,10 @@ public interface UserService {
 
     void updatePassword(Long id, UserCredentialsReqDTO userCredentialsReqDTO);
 
-    void updateAvatar(Long id, UserReqDTO userReqDTO);
+    void updateAvatar(Long id, UserAvatarReqDTO userAvatarReqDTO);
 
     void updateUserRole(Long id, UserRolesReqDTO userRolesReqDTO);
 
-    void recoverPassword(UserCredentialsReqDTO userCredentialsReqDTO);
+    void recoverPassword(UserPasswordRecoveryReqDTO userPasswordRecoveryReqDTO);
 
 }

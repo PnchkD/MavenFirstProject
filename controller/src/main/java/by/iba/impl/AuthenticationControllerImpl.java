@@ -1,13 +1,12 @@
 package by.iba.impl;
 
 import by.iba.AuthenticationController;
-import by.iba.ControllerHelper;
+import by.iba.helper.ControllerHelper;
 import by.iba.RecoveryCodeService;
 import by.iba.UserService;
-import by.iba.dto.req.UserCredentialsReqDTO;
+import by.iba.dto.req.*;
 import by.iba.dto.resp.AccessTokenDTO;
 import by.iba.dto.resp.RespStatusDTO;
-import by.iba.dto.req.UserReqDTO;
 import by.iba.filter.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -17,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @AllArgsConstructor
@@ -30,7 +31,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     private final JwtUtil jwtUtil;
 
     @Override
-    public ResponseEntity<RespStatusDTO> registerUser(UserReqDTO userReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<RespStatusDTO> registerUser(@RequestBody @Valid UserReqDTO userReqDTO, BindingResult bindingResult) {
         ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
         userService.save(userReqDTO);
@@ -42,12 +43,12 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     }
 
     @Override
-    public ResponseEntity<AccessTokenDTO> login(UserReqDTO UserReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<AccessTokenDTO> login(@RequestBody @Valid UserAuthReqDTO userAuthReqDTO, BindingResult bindingResult) {
         ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                UserReqDTO.getLogin(),
-                UserReqDTO.getPassword()
+                userAuthReqDTO.getLogin(),
+                userAuthReqDTO.getPassword()
         );
 
         authenticationManager.authenticate(authenticationToken);
@@ -55,15 +56,15 @@ public class AuthenticationControllerImpl implements AuthenticationController {
         return ResponseEntity
                 .ok()
                 .body(objectMapper.convertValue(
-                        jwtUtil.generateToken(userService.login(UserReqDTO)
+                        jwtUtil.generateToken(userService.login(userAuthReqDTO)
                         ), AccessTokenDTO.class));
     }
 
 
     @Override
-    public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(UserCredentialsReqDTO userCredentialsReqDTO){
+    public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@RequestBody @Valid UserLoginReqDTO userLoginReqDTO){
 
-        recoveryCodeService.sendRecoveryCode(userCredentialsReqDTO);
+        recoveryCodeService.sendRecoveryCode(userLoginReqDTO);
 
         return ResponseEntity
                 .ok()
@@ -71,7 +72,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> checkRecoveryCode(String code) {
+    public ResponseEntity<RespStatusDTO> checkRecoveryCode(@PathVariable String code) {
 
         recoveryCodeService.checkRecoveryCode(code);
 
@@ -81,10 +82,10 @@ public class AuthenticationControllerImpl implements AuthenticationController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> updateUserPassword(UserCredentialsReqDTO userCredentialsReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<RespStatusDTO> updateUserPassword(@RequestBody @Valid UserPasswordRecoveryReqDTO userPasswordRecoveryReqDTO, BindingResult bindingResult) {
         ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
-        userService.recoverPassword(userCredentialsReqDTO);
+        userService.recoverPassword(userPasswordRecoveryReqDTO);
 
         return ResponseEntity
                 .ok()

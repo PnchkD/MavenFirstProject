@@ -1,7 +1,7 @@
 package by.iba.impl;
 
 import by.iba.AdminController;
-import by.iba.ControllerHelper;
+import by.iba.helper.ControllerHelper;
 import by.iba.UserService;
 import by.iba.dto.req.UserRolesReqDTO;
 import by.iba.dto.resp.*;
@@ -32,11 +32,11 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public ResponseEntity<RespStatusDTO> banUser(@PathVariable Long id) {
 
-        userService.banUser(id, true);
+        UserDTO user = userService.banUser(id, true);
 
         return ResponseEntity
                 .ok()
-                .body(new RespStatusDTO("USER_NAS_BEEN_BANNED"));
+                .body(new RespStatusDTO("USER WITH ID " + id + " HAS BEEN UNBANNED"));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AdminControllerImpl implements AdminController {
 
         return ResponseEntity
                 .ok()
-                .body(new RespStatusDTO("USER_NAS_BEEN_BANNED"));
+                .body(new RespStatusDTO("USER WITH ID " + id + " HAS BEEN UNBANNED"));
     }
 
 
@@ -56,7 +56,7 @@ public class AdminControllerImpl implements AdminController {
 
         return ResponseEntity
                 .ok()
-                .body(new RespStatusDTO("User has been confirmed"));
+                .body(new RespStatusDTO("User with id " + id + " has been confirmed"));
     }
 
     @Override

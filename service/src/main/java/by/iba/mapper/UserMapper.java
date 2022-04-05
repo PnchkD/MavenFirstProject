@@ -1,6 +1,7 @@
 package by.iba.mapper;
 
-import by.iba.dto.req.UserReqDTO;
+import by.iba.dto.req.UserAvatarReqDTO;
+import by.iba.dto.req.UserPersonalDataReqDTO;
 import by.iba.dto.resp.UserDTO;
 import by.iba.dto.resp.UserRoleDTO;
 import by.iba.entity.user.Photo;
@@ -72,22 +73,30 @@ public class UserMapper {
         return userDTO;
     }
 
-    public void fillFromInDTO(UserEntity user, UserReqDTO userReqDTO){
+    public void fillFromInDTO(UserEntity user, UserPersonalDataReqDTO userPersonalDataReqDTO){
 
-        if(Objects.nonNull(userReqDTO.getEmail())) {
-            user.setEmail(userReqDTO.getEmail());
+        if(Objects.nonNull(userPersonalDataReqDTO.getEmail())) {
+            user.setEmail(userPersonalDataReqDTO.getEmail());
         }
 
-        if(Objects.nonNull(userReqDTO.getFirstName())) {
-            user.setFirstName(userReqDTO.getFirstName());
+        if(Objects.nonNull(userPersonalDataReqDTO.getFirstName())) {
+            user.setFirstName(userPersonalDataReqDTO.getFirstName());
         }
 
-        if(Objects.nonNull(userReqDTO.getLastName())) {
-            user.setLastName(userReqDTO.getLastName());
+        if(Objects.nonNull(userPersonalDataReqDTO.getLastName())) {
+            user.setLastName(userPersonalDataReqDTO.getLastName());
         }
 
-        if (Objects.nonNull(userReqDTO.getImage())) {
-            user.setAvatar(new Photo(userReqDTO.getImage()));
+        if (Objects.nonNull(userPersonalDataReqDTO.getImage())) {
+            user.setAvatar(new Photo(userPersonalDataReqDTO.getImage()));
+        }
+
+    }
+
+    public void fillFromInDTO(UserEntity user, UserAvatarReqDTO userAvatarReqDTO){
+
+        if (Objects.nonNull(userAvatarReqDTO.getImage())) {
+            user.setAvatar(new Photo(userAvatarReqDTO.getImage()));
         }
 
     }

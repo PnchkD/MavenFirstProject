@@ -1,6 +1,8 @@
 package by.iba.impl;
 
-import by.iba.ControllerHelper;
+import by.iba.dto.req.UserAvatarReqDTO;
+import by.iba.dto.req.UserPersonalDataReqDTO;
+import by.iba.helper.ControllerHelper;
 import by.iba.UserController;
 import by.iba.UserService;
 import by.iba.dto.req.UserReqDTO;
@@ -13,9 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @AllArgsConstructor
-@Validated
 public class UserControllerImpl implements UserController {
 
     private final UserService userService;
@@ -31,10 +34,10 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserReqDTO userReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody @Valid UserPersonalDataReqDTO userPersonalDataReqDTO, BindingResult bindingResult) {
         ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
-        UserDTO user = userService.update(id, userReqDTO);
+        UserDTO user = userService.update(id, userPersonalDataReqDTO);
 
         return ResponseEntity
                 .ok()
@@ -42,10 +45,10 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestBody UserReqDTO userReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestBody @Valid UserAvatarReqDTO userAvatarReqDTO, BindingResult bindingResult) {
         ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
-        userService.updateAvatar(id, userReqDTO);
+        userService.updateAvatar(id, userAvatarReqDTO);
 
         return ResponseEntity
                 .ok()
@@ -53,7 +56,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> updatePassword(@PathVariable Long id, @RequestBody UserCredentialsReqDTO userCredentialsReqDTO, BindingResult bindingResult) {
+    public ResponseEntity<RespStatusDTO> updatePassword(@PathVariable Long id, @RequestBody @Valid UserCredentialsReqDTO userCredentialsReqDTO, BindingResult bindingResult) {
         ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
 
         userService.updatePassword(id, userCredentialsReqDTO);

@@ -1,4 +1,4 @@
-package by.iba;
+package by.iba.helper;
 
 import by.iba.exception.IllegalRequestException;
 import org.springframework.validation.BindingResult;

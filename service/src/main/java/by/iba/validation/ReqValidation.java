@@ -6,7 +6,6 @@ public final class ReqValidation {
     }
 
     public static final int MAX_EMAIL_LENGTH = 64;
-    public static final int MAX_SUBJECT_LENGTH = 128;
     public static final int MAX_FIRST_NAME_LENGTH = 64;
     public static final int MAX_LAST_NAME_LENGTH = 64;
     public static final int MAX_PASSWORD_LENGTH = 16;

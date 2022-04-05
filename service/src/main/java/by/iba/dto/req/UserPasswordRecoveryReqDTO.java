@@ -10,18 +10,14 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCredentialsReqDTO extends BaseAbstractReq {
+public class UserPasswordRecoveryReqDTO extends BaseAbstractReq {
 
     @NotBlank(message = "Login cannot be empty")
     private String login;
-
-    @NotBlank(message = "Old password cannot be empty")
-    private String oldPassword;
 
     @Size(message = "Length is too large or too small",
             min = ReqValidation.MIN_PASSWORD_LENGTH,

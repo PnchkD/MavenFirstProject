@@ -1,16 +1,24 @@
 package by.iba.config;
 
 import by.iba.service.EmailService;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import by.iba.service.impl.DefaultEmailService;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 
-@Configuration
+@Getter
+@Setter
+@NoArgsConstructor
+@Component
 public class MailConfig {
 
     @Value("${spring.mail.username}")
@@ -35,11 +43,5 @@ public class MailConfig {
         props.put("mail.debug", "true");
 
         return mailSender;
-    }
-
-    @Bean
-    public EmailService mailService() {
-        final EmailService mailService = new DefaultEmailService(new JavaMailSenderImpl());
-        return mailService;
     }
 }

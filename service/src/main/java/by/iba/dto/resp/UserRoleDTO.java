@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class UserRoleDTO {
 
-    @NotBlank(message = "validation.by.iba.role_null")
+    @NotBlank(message = "Role cannot be empty")
     private String role;
 
 }

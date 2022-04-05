@@ -1,7 +1,7 @@
 package by.iba.impl;
 
 import by.iba.RecoveryCodeService;
-import by.iba.dto.req.UserCredentialsReqDTO;
+import by.iba.dto.req.UserLoginReqDTO;
 import by.iba.entity.user.RecoveryCode;
 import by.iba.entity.user.UserEntity;
 import by.iba.exception.RecoveryCodeNotFoundException;
@@ -25,8 +25,8 @@ public class RecoveryCodeImpl implements RecoveryCodeService {
 
     @Override
     @Transactional
-    public void sendRecoveryCode(UserCredentialsReqDTO userCredentialsReqDTO) {
-        UserEntity user = userRepository.findByLogin(userCredentialsReqDTO.getLogin())
+    public void sendRecoveryCode(UserLoginReqDTO userLoginReqDTO) {
+        UserEntity user = userRepository.findByLogin(userLoginReqDTO.getLogin())
                 .orElseThrow(UserNotFoundException::new);
 
         RecoveryCode newRecoveryCode = new RecoveryCode();

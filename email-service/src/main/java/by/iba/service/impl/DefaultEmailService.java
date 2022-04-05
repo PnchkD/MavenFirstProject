@@ -1,10 +1,13 @@
 package by.iba.service.impl;
 
+import by.iba.exception.EmailServiceException;
 import by.iba.service.EmailService;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
 
 @Service
 @AllArgsConstructor
@@ -12,6 +15,7 @@ public class DefaultEmailService implements EmailService {
 
     private final JavaMailSender emailSender;
 
+    @Async
     @Override
     public void sendEmail(String toAddress, String subject, String message) {
 
@@ -21,7 +25,12 @@ public class DefaultEmailService implements EmailService {
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(message);
 
-        this.emailSender.send(simpleMailMessage);
+        try {
+            this.emailSender.send(simpleMailMessage);
+        } catch (Exception e) {
+            throw new EmailServiceException("This email does not exist", e);
+        }
+
     }
 
 }

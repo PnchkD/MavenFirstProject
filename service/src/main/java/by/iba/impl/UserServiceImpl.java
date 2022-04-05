@@ -12,9 +12,11 @@ import by.iba.exception.*;
 import by.iba.mapper.UserMapper;
 import by.iba.repository.UserRepository;
 import by.iba.repository.UserRolesRepository;
+import by.iba.service.EmailService;
 import by.iba.service.impl.DefaultEmailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -34,7 +36,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder bCryptPasswordEncoder;
-    private final DefaultEmailService emailService;
+
+    @Autowired
+    private final EmailService emailService;
+
     private final ObjectMapper objectMapper;
     private final UserRolesService userRolesService;
     private final UserRolesRepository userRolesRepository;
@@ -62,7 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO save(UserReqDTO userReqDTO) {
-        //validUser(userReqDTO);
+
         UserEntity user = objectMapper.convertValue(userReqDTO, UserEntity.class);
         user.setAvatar(new Photo(userReqDTO.getImage()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -73,18 +78,20 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(user);
-
-        emailService.sendEmail(user.getEmail(), "Welcome!", "Your registration is successful!");
+        try {
+            emailService.sendEmail(user.getEmail(), "Welcome!", "Your registration is successful!");
+        } catch (EmailServiceException ex) {
+            throw new InvalidEmailException("This email does not exist");
+        }
 
         return userMapper.fillFromInDTO(user);
     }
 
     @Override
     @Transactional
-    public UserEntity login(UserReqDTO UserReqDTO) {
+    public UserEntity login(UserAuthReqDTO userAuthReqDTO) {
 
-        String login = UserReqDTO.getLogin();
-        UserEntity user = userRepository.findByLogin(login)
+        UserEntity user = userRepository.findByLogin(userAuthReqDTO.getLogin())
                 .orElseThrow(() -> new BadCredentialsException("BAD_CREDENTIALS"));
 
         if (Objects.nonNull(user.getBannedDate())) {
@@ -99,13 +106,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDTO update(Long id, UserReqDTO userReqDTO) {
-        //validUser(userReqDTO);
+    public UserDTO update(Long id, UserPersonalDataReqDTO userPersonalDataReqDTO) {
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
-        userMapper.fillFromInDTO(user, userReqDTO);
+        userMapper.fillFromInDTO(user, userPersonalDataReqDTO);
 
         user.setDateOfLastUpdate(LocalDateTime.now());
         userRepository.save(user);
@@ -172,11 +178,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateAvatar(Long id, UserReqDTO userReqDTO) {
+    public void updateAvatar(Long id, UserAvatarReqDTO userAvatarReqDTO) {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
-        userMapper.fillFromInDTO(user, userReqDTO);
+        userMapper.fillFromInDTO(user, userAvatarReqDTO);
 
         user.setDateOfLastUpdate(LocalDateTime.now());
         userRepository.save(user);
@@ -208,35 +214,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void recoverPassword(UserCredentialsReqDTO userCredentialsReqDTO) {
-        UserEntity user = userRepository.findByLogin(userCredentialsReqDTO.getLogin())
+    public void recoverPassword(UserPasswordRecoveryReqDTO userPasswordRecoveryReqDTO) {
+        UserEntity user = userRepository.findByLogin(userPasswordRecoveryReqDTO.getLogin())
                 .orElseThrow(UserNotFoundException::new);
 
-        if(!userCredentialsReqDTO.getNewPassword().equals(userCredentialsReqDTO.getConfirmedPassword())
-                && userCredentialsReqDTO.getNewPassword() != null){
+        if(!userPasswordRecoveryReqDTO.getNewPassword().equals(userPasswordRecoveryReqDTO.getConfirmedPassword())
+                && userPasswordRecoveryReqDTO.getNewPassword() != null){
             throw new BadCredentialsException("BAD_CREDENTIALS");
         }
 
-        user.setPassword(bCryptPasswordEncoder.encode(userCredentialsReqDTO.getNewPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(userPasswordRecoveryReqDTO.getNewPassword()));
         user.setDateOfLastUpdate(LocalDateTime.now());
 
         userRepository.save(user);
 
     }
-
-/*    private void validUser(UserReqDTO userReqDTO) {
-        if(Objects.isNull(userReqDTO.getLogin())
-            || Objects.isNull(userReqDTO.getPassword())
-            || Objects.isNull(userReqDTO.getFirstName())
-            || Objects.isNull(userReqDTO.getLastName())
-            || Objects.isNull(userReqDTO.getEmail())
-            || !validEmail(userReqDTO.getEmail())) {
-            throw new InvalidRegistrationDataException();
-        }
-    }
-
-    private boolean validEmail(String email) {
-        return email.contains("@") && email.contains(".");
-    }*/
 
 }

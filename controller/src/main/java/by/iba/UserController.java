@@ -1,6 +1,7 @@
 package by.iba;
 
-import by.iba.dto.req.UserReqDTO;
+import by.iba.dto.req.UserAvatarReqDTO;
+import by.iba.dto.req.UserPersonalDataReqDTO;
 import by.iba.dto.req.UserCredentialsReqDTO;
 import by.iba.dto.resp.RespStatusDTO;
 import by.iba.dto.resp.UserDTO;
@@ -17,10 +18,10 @@ public interface UserController {
     ResponseEntity<UserDTO> getUserById(@PathVariable Long id);
 
     @PutMapping("/{id}")
-    ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody @Valid UserReqDTO userReqDTO, BindingResult bindingResult);
+    ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody @Valid UserPersonalDataReqDTO userPersonalDataReqDTO, BindingResult bindingResult);
 
     @PatchMapping("/{id}/avatar")
-    ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestBody @Valid  UserReqDTO userReqDTO, BindingResult bindingResult);
+    ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestBody @Valid UserAvatarReqDTO userAvatarReqDTO, BindingResult bindingResult);
 
     @PatchMapping("/{id}/credentials")
     ResponseEntity<RespStatusDTO> updatePassword(@PathVariable Long id, @RequestBody @Valid UserCredentialsReqDTO userCredentialsReqDTO, BindingResult bindingResult);
