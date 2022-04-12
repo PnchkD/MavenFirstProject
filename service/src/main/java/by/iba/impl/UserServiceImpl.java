@@ -13,20 +13,25 @@ import by.iba.mapper.UserMapper;
 import by.iba.repository.UserRepository;
 import by.iba.repository.UserRolesRepository;
 import by.iba.service.EmailService;
-import by.iba.service.impl.DefaultEmailService;
+import by.iba.specification.user.UserSpecificationsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,11 +51,43 @@ public class UserServiceImpl implements UserService {
 
     private static final String STANDARD_ROLE ="USER";
 
+    private final EntityManager entityManager;
+
     @Override
     @Transactional
-    public List<UserDTO> findAll() {
-        return userRepository.findAll()
-                .stream()
+    public List<UserDTO> findAll(UserSortCriteriaReqDTO userSortCriteriaReqDTO) {
+        checkDefaultValues(userSortCriteriaReqDTO);
+
+        Pageable paging = PageRequest.of(userSortCriteriaReqDTO.getPageNo(), userSortCriteriaReqDTO.getPageSize(), Sort.by(userSortCriteriaReqDTO.getSortBy()));
+        if(userSortCriteriaReqDTO.isDesc()) {
+            paging = PageRequest.of(userSortCriteriaReqDTO.getPageNo(), userSortCriteriaReqDTO.getPageSize(), Sort.by(userSortCriteriaReqDTO.getSortBy()).descending());
+        }
+
+        Page<UserEntity> pagedResult = userRepository.findAll(paging);
+
+        return pagedResult.getContent().stream()
+                .map(userMapper::fillFromInDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<UserDTO> searchUser(String search) {
+        UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+
+        if (Objects.nonNull(search)) {
+            Pattern pattern = Pattern.compile("(\\w+?)(:|<|>|~)(\\w+?),");
+            Matcher matcher = pattern.matcher(search + ",");
+
+            while (matcher.find()) {
+                builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+            }
+
+        }
+
+        Specification<UserEntity> specification = builder.build();
+
+        return userRepository.findAll(specification).stream()
                 .map(userMapper::fillFromInDTO)
                 .collect(Collectors.toList());
     }
@@ -228,6 +265,20 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
+    }
+
+    private void checkDefaultValues(UserSortCriteriaReqDTO userSortCriteriaReqDTO) {
+        if(Objects.isNull(userSortCriteriaReqDTO.getPageNo())) {
+            userSortCriteriaReqDTO.setPageNo(0);
+        }
+
+        if(Objects.isNull(userSortCriteriaReqDTO.getPageSize())) {
+            userSortCriteriaReqDTO.setPageSize(10);
+        }
+
+        if(Objects.isNull(userSortCriteriaReqDTO.getSortBy())) {
+            userSortCriteriaReqDTO.setSortBy("id");
+        }
     }
 
 }

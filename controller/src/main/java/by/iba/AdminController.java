@@ -1,6 +1,8 @@
 package by.iba;
 
 import by.iba.dto.req.UserRolesReqDTO;
+import by.iba.dto.req.UserSearchCriteriaReqDTO;
+import by.iba.dto.req.UserSortCriteriaReqDTO;
 import by.iba.dto.resp.RespStatusDTO;
 import by.iba.dto.resp.UsersDTO;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,10 @@ import javax.validation.Valid;
 public interface AdminController {
 
     @GetMapping("/users")
-    ResponseEntity<UsersDTO> getUsers();
+    ResponseEntity<UsersDTO> getUsers(UserSortCriteriaReqDTO userSortCriteriaReqDTO);
+
+    @GetMapping("/users/search")
+    ResponseEntity<UsersDTO> search(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO);
 
     @PatchMapping("/users/ban/{id}")
     ResponseEntity<RespStatusDTO> banUser(@PathVariable Long id);

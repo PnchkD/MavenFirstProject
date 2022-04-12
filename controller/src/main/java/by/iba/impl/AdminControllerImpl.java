@@ -1,6 +1,8 @@
 package by.iba.impl;
 
 import by.iba.AdminController;
+import by.iba.dto.req.UserSearchCriteriaReqDTO;
+import by.iba.dto.req.UserSortCriteriaReqDTO;
 import by.iba.helper.ControllerHelper;
 import by.iba.UserService;
 import by.iba.dto.req.UserRolesReqDTO;
@@ -21,8 +23,17 @@ public class AdminControllerImpl implements AdminController {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<UsersDTO> getUsers() {
-        List<UserDTO> users = userService.findAll();
+    public ResponseEntity<UsersDTO> getUsers(UserSortCriteriaReqDTO userSortCriteriaReqDTO) {
+        List<UserDTO> users = userService.findAll(userSortCriteriaReqDTO);
+
+        return ResponseEntity
+                .ok()
+                .body(new UsersDTO(users));
+    }
+
+    @Override
+    public ResponseEntity<UsersDTO> search(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO) {
+        List<UserDTO> users = userService.searchUser(userSearchCriteriaReqDTO.getSearch());
 
         return ResponseEntity
                 .ok()

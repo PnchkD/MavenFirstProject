@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface UserService {
 
-    List<UserDTO> findAll();
+    List<UserDTO> findAll(UserSortCriteriaReqDTO userSortCriteriaReqDTO);
+
+    List<UserDTO> searchUser(String search);
 
     UserDTO findById(Long id);
 
