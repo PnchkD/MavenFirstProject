@@ -6,12 +6,12 @@ spring:
     driver-class-name: org.postgresql.Driver
     initialization-mode: always
     ##################### MY SQL DATABASE #################################
-    url: jdbc:postgresql://localhost:5432/automotive_selection
-    #url: jdbc:postgresql://automotive_selection_db_postgres:5432/automotive_selection
-    #username: automotive_selection_app
-    #password: automotive_selection_pw
-    username: postgres
-    password: admin
+    #url: jdbc:postgresql://localhost:5432/automotive_selection
+    url: jdbc:postgresql://automotive_selection_db_postgres:5432/automotive_selection
+    username: automotive_selection_app
+    password: automotive_selection_pw
+    #username: postgres
+    #password: admin
   ##################### JPA USED SPRING DATA #################################
   jpa:
     hibernate:

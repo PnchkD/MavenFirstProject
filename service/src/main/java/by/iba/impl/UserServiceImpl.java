@@ -27,7 +27,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -51,8 +50,6 @@ public class UserServiceImpl implements UserService {
 
     private static final String STANDARD_ROLE ="USER";
 
-    private final EntityManager entityManager;
-
     @Override
     @Transactional
     public List<UserDTO> findAll(UserSortCriteriaReqDTO userSortCriteriaReqDTO) {
@@ -71,7 +68,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public List<UserDTO> searchUser(String search) {
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
 
@@ -231,7 +227,7 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new);
 
-        if (userRolesReqDTO.getRoles().isEmpty()) {
+        if (Objects.isNull(userRolesReqDTO) || userRolesReqDTO.getRoles().isEmpty()) {
            throw new UserRoleNotFoundException();
         }
 

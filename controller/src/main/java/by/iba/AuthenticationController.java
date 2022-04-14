@@ -19,9 +19,9 @@ public interface AuthenticationController {
     ResponseEntity<AccessTokenDTO> login(@RequestBody @Valid UserAuthReqDTO userAuthReqDTO, BindingResult bindingResult);
 
     @GetMapping("/password_recovery")
-    ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@RequestBody @Valid UserLoginReqDTO userLoginReqDTO);
+    ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@Valid UserLoginReqDTO userLoginReqDTO);
 
-    @GetMapping("/password_recovery/{code}")
+    @GetMapping("/password_recovery/code/{code}")
     ResponseEntity<RespStatusDTO> checkRecoveryCode(@PathVariable String code);
 
     @PutMapping("/password_recovery")

@@ -62,7 +62,7 @@ public class AuthenticationControllerImpl implements AuthenticationController {
 
 
     @Override
-    public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(@RequestBody @Valid UserLoginReqDTO userLoginReqDTO){
+    public ResponseEntity<RespStatusDTO> passwordRecoveryWithEmail(UserLoginReqDTO userLoginReqDTO){
 
         recoveryCodeService.sendRecoveryCode(userLoginReqDTO);
 
