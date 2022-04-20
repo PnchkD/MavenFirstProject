@@ -23,17 +23,8 @@ public class AdminControllerImpl implements AdminController {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<UsersDTO> getUsers(UserSortCriteriaReqDTO userSortCriteriaReqDTO) {
-        List<UserDTO> users = userService.findAll(userSortCriteriaReqDTO);
-
-        return ResponseEntity
-                .ok()
-                .body(new UsersDTO(users));
-    }
-
-    @Override
-    public ResponseEntity<UsersDTO> search(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO) {
-        List<UserDTO> users = userService.searchUser(userSearchCriteriaReqDTO.getSearch());
+    public ResponseEntity<UsersDTO> getUsers(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO) {
+        List<UserDTO> users = userService.findAll(userSearchCriteriaReqDTO);
 
         return ResponseEntity
                 .ok()
@@ -43,11 +34,11 @@ public class AdminControllerImpl implements AdminController {
     @Override
     public ResponseEntity<RespStatusDTO> banUser(@PathVariable Long id) {
 
-        UserDTO user = userService.banUser(id, true);
+        userService.banUser(id, true);
 
         return ResponseEntity
                 .ok()
-                .body(new RespStatusDTO("USER WITH ID " + id + " HAS BEEN UNBANNED"));
+                .body(new RespStatusDTO("USER WITH ID " + id + " HAS BEEN BANNED"));
     }
 
     @Override

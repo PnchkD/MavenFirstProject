@@ -1,19 +1,19 @@
 package by.iba.impl;
 
-import by.iba.dto.req.UserAvatarReqDTO;
-import by.iba.dto.req.UserPersonalDataReqDTO;
-import by.iba.helper.ControllerHelper;
 import by.iba.UserController;
 import by.iba.UserService;
-import by.iba.dto.req.UserReqDTO;
+import by.iba.dto.req.UserAvatarReqDTO;
 import by.iba.dto.req.UserCredentialsReqDTO;
+import by.iba.dto.req.UserPersonalDataReqDTO;
 import by.iba.dto.resp.RespStatusDTO;
 import by.iba.dto.resp.UserDTO;
+import by.iba.helper.ControllerHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 

@@ -5,22 +5,17 @@ import by.iba.UserService;
 import by.iba.dto.req.*;
 import by.iba.dto.resp.UserDTO;
 import by.iba.dto.resp.UserRoleDTO;
-import by.iba.entity.user.Photo;
 import by.iba.entity.user.UserEntity;
 import by.iba.entity.user.UserRole;
 import by.iba.exception.*;
 import by.iba.mapper.UserMapper;
 import by.iba.repository.UserRepository;
-import by.iba.repository.UserRolesRepository;
 import by.iba.service.EmailService;
 import by.iba.specification.user.UserSpecificationsBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import by.iba.util.UserServiceUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -40,40 +38,23 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
     private final EmailService emailService;
-
-    private final ObjectMapper objectMapper;
     private final UserRolesService userRolesService;
-    private final UserRolesRepository userRolesRepository;
+    private final UserServiceUtil userUtils;
 
-    private static final String STANDARD_ROLE ="USER";
+    private static final String STANDARD_ROLE = "USER";
+    private static final String USER_NOT_FOUND_MESSAGE = "USER_HAS_BEEN_NOT_FOUND";
+    private static final String BAD_CREDENTIALS_MESSAGE = "BAD_CREDENTIALS";
 
     @Override
     @Transactional
-    public List<UserDTO> findAll(UserSortCriteriaReqDTO userSortCriteriaReqDTO) {
-        checkDefaultValues(userSortCriteriaReqDTO);
-
-        Pageable paging = PageRequest.of(userSortCriteriaReqDTO.getPageNo(), userSortCriteriaReqDTO.getPageSize(), Sort.by(userSortCriteriaReqDTO.getSortBy()));
-        if(userSortCriteriaReqDTO.isDesc()) {
-            paging = PageRequest.of(userSortCriteriaReqDTO.getPageNo(), userSortCriteriaReqDTO.getPageSize(), Sort.by(userSortCriteriaReqDTO.getSortBy()).descending());
-        }
-
-        Page<UserEntity> pagedResult = userRepository.findAll(paging);
-
-        return pagedResult.getContent().stream()
-                .map(userMapper::fillFromInDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<UserDTO> searchUser(String search) {
+    public List<UserDTO> findAll(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO) {
+        userUtils.checkDefaultValues(userSearchCriteriaReqDTO);
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
 
-        if (Objects.nonNull(search)) {
+        if (Objects.nonNull(userSearchCriteriaReqDTO.getSearch())) {
             Pattern pattern = Pattern.compile("(\\w+?)(:|<|>|~)(\\w+?),");
-            Matcher matcher = pattern.matcher(search + ",");
+            Matcher matcher = pattern.matcher(userSearchCriteriaReqDTO.getSearch() + ",");
 
             while (matcher.find()) {
                 builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
@@ -83,7 +64,12 @@ public class UserServiceImpl implements UserService {
 
         Specification<UserEntity> specification = builder.build();
 
-        return userRepository.findAll(specification).stream()
+        Pageable paging = userUtils.getPageable(userSearchCriteriaReqDTO);
+
+        Page<UserEntity> pagedResult = userRepository.findAll(specification, paging);
+
+        return pagedResult.getContent()
+                .stream()
                 .map(userMapper::fillFromInDTO)
                 .collect(Collectors.toList());
     }
@@ -91,8 +77,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        UserEntity user = getUserById(id);
 
         return userMapper.fillFromInDTO(user);
     }
@@ -101,14 +86,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO save(UserReqDTO userReqDTO) {
 
-        UserEntity user = objectMapper.convertValue(userReqDTO, UserEntity.class);
-        user.setAvatar(new Photo(userReqDTO.getImage()));
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.getRoles().add(userRolesService.findByName(STANDARD_ROLE));
+        userRepository.findByLogin(userReqDTO.getLogin())
+                .ifPresent(value -> {
+                            throw new ResourceAlreadyExistException("USER_IS_ALREADY_EXIST");
+                        }
+                );
 
-        if (userRepository.findByLogin(user.getLogin()).isPresent()) {
-            throw new UserIsAlreadyExistException();
-        }
+        UserEntity user = userMapper.fillFromRespDTO(userReqDTO);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.getRoles().add(userRolesService.getByName(STANDARD_ROLE));
 
         userRepository.save(user);
         try {
@@ -125,7 +111,7 @@ public class UserServiceImpl implements UserService {
     public UserEntity login(UserAuthReqDTO userAuthReqDTO) {
 
         UserEntity user = userRepository.findByLogin(userAuthReqDTO.getLogin())
-                .orElseThrow(() -> new BadCredentialsException("BAD_CREDENTIALS"));
+                .orElseThrow(() -> new BadCredentialsException(BAD_CREDENTIALS_MESSAGE));
 
         if (Objects.nonNull(user.getBannedDate())) {
             throw new UserHasBeenBannedException("User account is disabled.");
@@ -141,8 +127,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO update(Long id, UserPersonalDataReqDTO userPersonalDataReqDTO) {
 
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        UserEntity user = getUserById(id);
 
         userMapper.fillFromInDTO(user, userPersonalDataReqDTO);
 
@@ -155,13 +140,12 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDTO banUser(Long id, boolean verdict) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        UserEntity user = getUserById(id);
 
-        if(verdict) {
+        if (verdict) {
 
-            if(user.getRoles().contains(userRolesService.findByName("ADMIN"))) {
-                throw new InvalidBanException();
+            if (user.getRoles().contains(userRolesService.getByName("ADMIN"))) {
+                throw new InvalidBanException("ADMIN_CANNOT_BAN_HIMSELF");
             }
 
             user.setBannedDate(LocalDateTime.now());
@@ -178,8 +162,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void confirmUser(Long id) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        UserEntity user = getUserById(id);
 
         user.setDateOfApproved(LocalDateTime.now());
 
@@ -190,16 +173,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updatePassword(Long id, UserCredentialsReqDTO userChangeCredentialsReqDTO) {
 
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        UserEntity user = getUserById(id);
 
-        if(Objects.isNull(userChangeCredentialsReqDTO.getLogin())
+        if (Objects.isNull(userChangeCredentialsReqDTO.getLogin())
                 || Objects.isNull(userChangeCredentialsReqDTO.getNewPassword())
                 || Objects.isNull(userChangeCredentialsReqDTO.getOldPassword())
                 || Objects.isNull(userChangeCredentialsReqDTO.getConfirmedPassword())
                 || (user.getPassword()).equals(bCryptPasswordEncoder.encode(userChangeCredentialsReqDTO.getOldPassword()))
                 || !userChangeCredentialsReqDTO.getNewPassword().equals(userChangeCredentialsReqDTO.getConfirmedPassword())) {
-            throw new BadCredentialsException("BAD_CREDENTIALS");
+            throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(userChangeCredentialsReqDTO.getNewPassword()));
@@ -212,8 +194,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateAvatar(Long id, UserAvatarReqDTO userAvatarReqDTO) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        UserEntity user = getUserById(id);
 
         userMapper.fillFromInDTO(user, userAvatarReqDTO);
 
@@ -224,18 +205,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUserRole(Long id, UserRolesReqDTO userRolesReqDTO) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(UserNotFoundException::new);
+        UserEntity user = getUserById(id);
 
         if (Objects.isNull(userRolesReqDTO) || userRolesReqDTO.getRoles().isEmpty()) {
-           throw new UserRoleNotFoundException();
+            throw new ResourceNotFoundException("INVALID_USER_ROLE");
         }
 
         Set<UserRole> roles = new HashSet<>();
 
-        for(UserRoleDTO role : userRolesReqDTO.getRoles()) {
-            UserRole userRole = userRolesRepository.findByName(role.getRole())
-                    .orElseThrow(UserRoleNotFoundException::new);
+        for (UserRoleDTO role : userRolesReqDTO.getRoles()) {
+            UserRole userRole = userRolesService.getByName(role.getRole());
             roles.add(userRole);
         }
 
@@ -249,11 +228,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void recoverPassword(UserPasswordRecoveryReqDTO userPasswordRecoveryReqDTO) {
         UserEntity user = userRepository.findByLogin(userPasswordRecoveryReqDTO.getLogin())
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND_MESSAGE));
 
-        if(!userPasswordRecoveryReqDTO.getNewPassword().equals(userPasswordRecoveryReqDTO.getConfirmedPassword())
-                && userPasswordRecoveryReqDTO.getNewPassword() != null){
-            throw new BadCredentialsException("BAD_CREDENTIALS");
+        if (!userPasswordRecoveryReqDTO.getNewPassword().equals(userPasswordRecoveryReqDTO.getConfirmedPassword())
+                && userPasswordRecoveryReqDTO.getNewPassword() != null) {
+            throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
         }
 
         user.setPassword(bCryptPasswordEncoder.encode(userPasswordRecoveryReqDTO.getNewPassword()));
@@ -263,18 +242,9 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    private void checkDefaultValues(UserSortCriteriaReqDTO userSortCriteriaReqDTO) {
-        if(Objects.isNull(userSortCriteriaReqDTO.getPageNo())) {
-            userSortCriteriaReqDTO.setPageNo(0);
-        }
-
-        if(Objects.isNull(userSortCriteriaReqDTO.getPageSize())) {
-            userSortCriteriaReqDTO.setPageSize(10);
-        }
-
-        if(Objects.isNull(userSortCriteriaReqDTO.getSortBy())) {
-            userSortCriteriaReqDTO.setSortBy("id");
-        }
+    private UserEntity getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND_MESSAGE));
     }
 
 }

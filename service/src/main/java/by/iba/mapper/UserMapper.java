@@ -2,6 +2,7 @@ package by.iba.mapper;
 
 import by.iba.dto.req.UserAvatarReqDTO;
 import by.iba.dto.req.UserPersonalDataReqDTO;
+import by.iba.dto.req.UserReqDTO;
 import by.iba.dto.resp.UserDTO;
 import by.iba.dto.resp.UserRoleDTO;
 import by.iba.entity.user.Photo;
@@ -99,6 +100,38 @@ public class UserMapper {
             user.setAvatar(new Photo(userAvatarReqDTO.getImage()));
         }
 
+    }
+
+    public UserEntity fillFromRespDTO(UserReqDTO userReqDTO){
+
+        UserEntity user = new UserEntity();
+
+        if (Objects.nonNull(userReqDTO.getFirstName())) {
+            user.setFirstName(userReqDTO.getFirstName());
+        }
+
+        if (Objects.nonNull(userReqDTO.getLastName())) {
+            user.setLastName(userReqDTO.getFirstName());
+        }
+
+        if (Objects.nonNull(userReqDTO.getLogin())) {
+            user.setLogin(userReqDTO.getLogin());
+        }
+
+        if (Objects.nonNull(userReqDTO.getEmail())) {
+            user.setEmail(userReqDTO.getEmail());
+        }
+
+        if (Objects.nonNull(userReqDTO.getPassword())) {
+            user.setPassword(userReqDTO.getPassword());
+        }
+
+        if (Objects.nonNull(userReqDTO.getImage())) {
+            Photo photo = new Photo(userReqDTO.getImage());
+            user.setAvatar(photo);
+        }
+
+        return user;
     }
 
 }

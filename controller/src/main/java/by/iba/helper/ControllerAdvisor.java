@@ -1,25 +1,20 @@
-package by.iba.exception;
+package by.iba.helper;
 
+import by.iba.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.mail.MailException;
-import org.springframework.mail.MailParseException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
@@ -31,8 +26,6 @@ import java.util.*;
 @Slf4j
 @AllArgsConstructor
 public class ControllerAdvisor {
-
-    private final MessageSource messageSource;
 
     @ExceptionHandler({HttpMessageNotReadableException.class, BindException.class,
             UnsatisfiedServletRequestParameterException.class, IllegalArgumentException.class,
@@ -48,13 +41,13 @@ public class ControllerAdvisor {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleUserNotFoundException(
-            UserNotFoundException ex, WebRequest request) {
+            ResourceNotFoundException ex, WebRequest request) {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
-        body.put("message", "User not found");
+        body.put("message", ex.getMessage());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -70,24 +63,13 @@ public class ControllerAdvisor {
         return new ResponseEntity<>(body, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(UserIsAlreadyExistException.class)
+    @ExceptionHandler(ResourceAlreadyExistException.class)
     public ResponseEntity<Object> handleUserIsAlreadyExistException(
-            UserIsAlreadyExistException ex, WebRequest request) {
+            ResourceAlreadyExistException ex, WebRequest request) {
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", "User is already exist");
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(RecoveryCodeNotFoundException.class)
-    public ResponseEntity<Object> handleRecoveryCodeNotFoundException(
-            RecoveryCodeNotFoundException ex, WebRequest request) {
-
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", "Recovery code has been hot found");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
@@ -99,17 +81,6 @@ public class ControllerAdvisor {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("message", "User account is disabled");
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(UserRoleNotFoundException.class)
-    public ResponseEntity<Object> handleUserRoleNotFoundException(
-            UserRoleNotFoundException ex, WebRequest request) {
-
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", "User role has been hot found");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

@@ -1,6 +1,6 @@
 package by.iba.service;
 
-import by.iba.exception.UserNotFoundException;
+import by.iba.exception.ResourceNotFoundException;
 import by.iba.repository.UserRepository;
 import by.iba.entity.user.UserEntity;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         UserEntity user = userRepository.findByLogin(userName)
-                .orElseThrow(UserNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException("USER_HAS_BEEN_NOT_FOUND"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));

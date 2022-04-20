@@ -15,10 +15,7 @@ import javax.validation.Valid;
 public interface AdminController {
 
     @GetMapping("/users")
-    ResponseEntity<UsersDTO> getUsers(UserSortCriteriaReqDTO userSortCriteriaReqDTO);
-
-    @GetMapping("/users/search")
-    ResponseEntity<UsersDTO> search(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO);
+    ResponseEntity<UsersDTO> getUsers(UserSearchCriteriaReqDTO userSortCriteriaReqDTO);
 
     @PatchMapping("/users/ban/{id}")
     ResponseEntity<RespStatusDTO> banUser(@PathVariable Long id);
