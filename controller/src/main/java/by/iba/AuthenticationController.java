@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RequestMapping("/api/v1/auth")
+@CrossOrigin(origins = "*")
 public interface AuthenticationController {
 
     @PostMapping(value = "/registration")

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RequestMapping(path = "/api/v1/users")
+@CrossOrigin(origins = "*")
 public interface UserController {
 
     @GetMapping("/{id}")

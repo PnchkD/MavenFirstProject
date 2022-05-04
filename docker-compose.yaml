@@ -27,8 +27,26 @@ services:
       - '8080:8080'
     networks:
       - backend
+      - frontend
+
+  client:
+    container_name: client
+    restart: always
+    image: automotive_selection_front
+    build:
+      context: ../automotive_selection_front/
+      dockerfile: ../automotive_selection_front/Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3000:80 # Map the exposed port 80 on the container to port 3000 on the host machine
+    depends_on:
+      - adminer
+    networks:
+      - frontend
 
 networks:
   backend:
+  frontend:
 volumes:
   postgres:
