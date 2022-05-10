@@ -1,6 +1,9 @@
 package by.iba;
 
-import by.iba.dto.req.*;
+import by.iba.dto.req.user.UserAuthReqDTO;
+import by.iba.dto.req.user.UserLoginReqDTO;
+import by.iba.dto.req.user.UserPasswordRecoveryReqDTO;
+import by.iba.dto.req.user.UserReqDTO;
 import by.iba.dto.resp.AccessTokenDTO;
 import by.iba.dto.resp.RespStatusDTO;
 import org.springframework.http.ResponseEntity;

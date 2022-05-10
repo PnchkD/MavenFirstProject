@@ -1,7 +1,7 @@
 package by.iba.impl;
 
 import by.iba.RecoveryCodeService;
-import by.iba.dto.req.UserLoginReqDTO;
+import by.iba.dto.req.user.UserLoginReqDTO;
 import by.iba.entity.user.RecoveryCode;
 import by.iba.entity.user.UserEntity;
 import by.iba.exception.ResourceNotFoundException;

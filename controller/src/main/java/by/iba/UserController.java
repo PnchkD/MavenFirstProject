@@ -1,10 +1,10 @@
 package by.iba;
 
-import by.iba.dto.req.UserAvatarReqDTO;
-import by.iba.dto.req.UserPersonalDataReqDTO;
-import by.iba.dto.req.UserCredentialsReqDTO;
+import by.iba.dto.req.user.UserAvatarReqDTO;
+import by.iba.dto.req.user.UserPersonalDataReqDTO;
+import by.iba.dto.req.user.UserCredentialsReqDTO;
 import by.iba.dto.resp.RespStatusDTO;
-import by.iba.dto.resp.UserDTO;
+import by.iba.dto.resp.user.UserDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;

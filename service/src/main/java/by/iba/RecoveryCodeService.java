@@ -1,6 +1,6 @@
 package by.iba;
 
-import by.iba.dto.req.UserLoginReqDTO;
+import by.iba.dto.req.user.UserLoginReqDTO;
 
 public interface RecoveryCodeService {
 

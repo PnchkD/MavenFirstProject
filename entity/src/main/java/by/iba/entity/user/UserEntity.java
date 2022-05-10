@@ -1,6 +1,7 @@
 package by.iba.entity.user;
 
 import by.iba.entity.AbstractEntity;
+import by.iba.entity.photo.Photo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,7 +39,8 @@ public class UserEntity extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<UserRole> roles = new HashSet<>();
 
-    @Column(name = "avatar")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "photo_id", referencedColumnName = "id")
     private Photo avatar;
 
     @Column(name = "is_mail_confirmed")

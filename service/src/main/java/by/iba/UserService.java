@@ -1,16 +1,14 @@
 package by.iba;
 
-import by.iba.dto.req.*;
-import by.iba.dto.resp.UserDTO;
+import by.iba.dto.req.user.*;
+import by.iba.dto.resp.user.UserDTO;
 import by.iba.entity.user.UserEntity;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<UserDTO> findAll(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO);
-
-    //List<UserDTO> searchUser(String search);
+    List<UserDTO> findAll(SearchCriteriaReqDTO searchCriteriaReqDTO);
 
     UserDTO findById(Long id);
 

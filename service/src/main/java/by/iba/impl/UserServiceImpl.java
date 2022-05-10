@@ -1,10 +1,12 @@
 package by.iba.impl;
 
+import by.iba.PhotoService;
 import by.iba.UserRolesService;
 import by.iba.UserService;
-import by.iba.dto.req.*;
-import by.iba.dto.resp.UserDTO;
-import by.iba.dto.resp.UserRoleDTO;
+import by.iba.dto.req.user.*;
+import by.iba.dto.resp.user.UserDTO;
+import by.iba.dto.resp.user.UserRoleDTO;
+import by.iba.entity.photo.Photo;
 import by.iba.entity.user.UserEntity;
 import by.iba.entity.user.UserRole;
 import by.iba.exception.*;
@@ -12,7 +14,7 @@ import by.iba.mapper.UserMapper;
 import by.iba.repository.UserRepository;
 import by.iba.service.EmailService;
 import by.iba.specification.user.UserSpecificationsBuilder;
-import by.iba.util.UserServiceUtil;
+import by.iba.util.SearchServiceUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,25 +38,27 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PhotoService photoService;
     private final UserMapper userMapper;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final EmailService emailService;
     private final UserRolesService userRolesService;
-    private final UserServiceUtil userUtils;
+    private final SearchServiceUtil searchUtils;
 
-    private static final String STANDARD_ROLE = "USER";
+    private static final String USER_ROLE = "USER";
+    private static final String AUTOPICKER_ROLE = "AUTOPICKER";
     private static final String USER_NOT_FOUND_MESSAGE = "USER_HAS_BEEN_NOT_FOUND";
     private static final String BAD_CREDENTIALS_MESSAGE = "BAD_CREDENTIALS";
 
     @Override
     @Transactional
-    public List<UserDTO> findAll(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO) {
-        userUtils.checkDefaultValues(userSearchCriteriaReqDTO);
+    public List<UserDTO> findAll(SearchCriteriaReqDTO searchCriteriaReqDTO) {
+        searchUtils.checkDefaultValues(searchCriteriaReqDTO);
         UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
 
-        if (Objects.nonNull(userSearchCriteriaReqDTO.getSearch())) {
+        if (Objects.nonNull(searchCriteriaReqDTO.getSearch())) {
             Pattern pattern = Pattern.compile("(\\w+?)(:|<|>|~)(\\w+?),");
-            Matcher matcher = pattern.matcher(userSearchCriteriaReqDTO.getSearch() + ",");
+            Matcher matcher = pattern.matcher(searchCriteriaReqDTO.getSearch() + ",");
 
             while (matcher.find()) {
                 builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
@@ -64,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
         Specification<UserEntity> specification = builder.build();
 
-        Pageable paging = userUtils.getPageable(userSearchCriteriaReqDTO);
+        Pageable paging = searchUtils.getPageable(searchCriteriaReqDTO);
 
         Page<UserEntity> pagedResult = userRepository.findAll(specification, paging);
 
@@ -94,7 +98,12 @@ public class UserServiceImpl implements UserService {
 
         UserEntity user = userMapper.fillFromRespDTO(userReqDTO);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.getRoles().add(userRolesService.getByName(STANDARD_ROLE));
+
+        if(Objects.nonNull(userReqDTO.getIsAutoPicker()) && userReqDTO.getIsAutoPicker().equals("true")) {
+            user.getRoles().add(userRolesService.getByName(AUTOPICKER_ROLE));
+        } else {
+            user.getRoles().add(userRolesService.getByName(USER_ROLE));
+        }
 
         userRepository.save(user);
         try {
@@ -196,7 +205,9 @@ public class UserServiceImpl implements UserService {
     public void updateAvatar(Long id, UserAvatarReqDTO userAvatarReqDTO) {
         UserEntity user = getUserById(id);
 
-        userMapper.fillFromInDTO(user, userAvatarReqDTO);
+        Photo avatar = photoService.save(userAvatarReqDTO.getImage());
+
+        userMapper.fillFromInDTO(user, avatar);
 
         user.setDateOfLastUpdate(LocalDateTime.now());
         userRepository.save(user);

@@ -44,6 +44,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .authorizeRequests()
                     .antMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
+                    .antMatchers("/api/v1/autopicker/**").hasAnyAuthority("AUTOPICKER","ADMIN")
                     .antMatchers("/api/v1/users/**").hasAnyAuthority("ADMIN", "USER", "AUTOPICKER")
                     .antMatchers("/api/v1/auth/**").permitAll()
 

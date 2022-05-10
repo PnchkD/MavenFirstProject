@@ -1,11 +1,12 @@
 package by.iba.impl;
 
 import by.iba.AdminController;
-import by.iba.dto.req.UserSearchCriteriaReqDTO;
-import by.iba.dto.req.UserSortCriteriaReqDTO;
+import by.iba.dto.req.user.SearchCriteriaReqDTO;
+import by.iba.dto.resp.user.UserDTO;
+import by.iba.dto.resp.user.UsersDTO;
 import by.iba.helper.ControllerHelper;
 import by.iba.UserService;
-import by.iba.dto.req.UserRolesReqDTO;
+import by.iba.dto.req.user.UserRolesReqDTO;
 import by.iba.dto.resp.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class AdminControllerImpl implements AdminController {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<UsersDTO> getUsers(UserSearchCriteriaReqDTO userSearchCriteriaReqDTO) {
-        List<UserDTO> users = userService.findAll(userSearchCriteriaReqDTO);
+    public ResponseEntity<UsersDTO> getUsers(SearchCriteriaReqDTO searchCriteriaReqDTO) {
+        List<UserDTO> users = userService.findAll(searchCriteriaReqDTO);
 
         return ResponseEntity
                 .ok()

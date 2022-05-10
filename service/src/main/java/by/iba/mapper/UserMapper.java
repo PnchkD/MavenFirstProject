@@ -1,11 +1,11 @@
 package by.iba.mapper;
 
-import by.iba.dto.req.UserAvatarReqDTO;
-import by.iba.dto.req.UserPersonalDataReqDTO;
-import by.iba.dto.req.UserReqDTO;
-import by.iba.dto.resp.UserDTO;
-import by.iba.dto.resp.UserRoleDTO;
-import by.iba.entity.user.Photo;
+import by.iba.dto.req.user.UserAvatarReqDTO;
+import by.iba.dto.req.user.UserPersonalDataReqDTO;
+import by.iba.dto.req.user.UserReqDTO;
+import by.iba.dto.resp.user.UserDTO;
+import by.iba.dto.resp.user.UserRoleDTO;
+import by.iba.entity.photo.Photo;
 import by.iba.entity.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -88,16 +88,12 @@ public class UserMapper {
             user.setLastName(userPersonalDataReqDTO.getLastName());
         }
 
-        if (Objects.nonNull(userPersonalDataReqDTO.getImage())) {
-            user.setAvatar(new Photo(userPersonalDataReqDTO.getImage()));
-        }
-
     }
 
-    public void fillFromInDTO(UserEntity user, UserAvatarReqDTO userAvatarReqDTO){
+    public void fillFromInDTO(UserEntity user, Photo avatar){
 
-        if (Objects.nonNull(userAvatarReqDTO.getImage())) {
-            user.setAvatar(new Photo(userAvatarReqDTO.getImage()));
+        if (Objects.nonNull(avatar)) {
+            user.setAvatar(avatar);
         }
 
     }
@@ -124,11 +120,6 @@ public class UserMapper {
 
         if (Objects.nonNull(userReqDTO.getPassword())) {
             user.setPassword(userReqDTO.getPassword());
-        }
-
-        if (Objects.nonNull(userReqDTO.getImage())) {
-            Photo photo = new Photo(userReqDTO.getImage());
-            user.setAvatar(photo);
         }
 
         return user;

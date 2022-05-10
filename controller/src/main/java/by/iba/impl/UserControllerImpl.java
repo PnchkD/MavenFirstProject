@@ -2,11 +2,11 @@ package by.iba.impl;
 
 import by.iba.UserController;
 import by.iba.UserService;
-import by.iba.dto.req.UserAvatarReqDTO;
-import by.iba.dto.req.UserCredentialsReqDTO;
-import by.iba.dto.req.UserPersonalDataReqDTO;
+import by.iba.dto.req.user.UserAvatarReqDTO;
+import by.iba.dto.req.user.UserCredentialsReqDTO;
+import by.iba.dto.req.user.UserPersonalDataReqDTO;
 import by.iba.dto.resp.RespStatusDTO;
-import by.iba.dto.resp.UserDTO;
+import by.iba.dto.resp.user.UserDTO;
 import by.iba.helper.ControllerHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

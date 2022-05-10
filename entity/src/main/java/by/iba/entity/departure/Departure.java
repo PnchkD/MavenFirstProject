@@ -1,7 +1,7 @@
 package by.iba.entity.departure;
 
 import by.iba.entity.AbstractEntity;
-import by.iba.entity.auto.Auto;
+import by.iba.entity.car.Car;
 import by.iba.entity.user.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +29,6 @@ public class Departure extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "auto_id")
-    private Auto auto;
+    private Car car;
 
 }
