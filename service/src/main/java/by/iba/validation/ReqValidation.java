@@ -21,4 +21,7 @@ public final class ReqValidation {
     public static final int MAX_AUTO_TRANSMISSION_LENGTH = 64;
     public static final int MAX_AUTO_STATE_LENGTH = 64;
 
+    public static final int MAX_COUNTRY_NAME_LENGTH = 64;
+    public static final int MAX_CITY_NAME_LENGTH = 64;
+
 }

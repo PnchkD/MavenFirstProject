@@ -9,4 +9,6 @@ public interface PhotoService {
 
     Photo save(String imageUrl, Car car);
 
+    void deleteAllByCarId(Long id);
+
 }

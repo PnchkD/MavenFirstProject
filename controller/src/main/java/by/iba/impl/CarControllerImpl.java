@@ -2,10 +2,13 @@ package by.iba.impl;
 
 import by.iba.CarController;
 import by.iba.CarService;
+import by.iba.dto.req.car.CarDescriptionReqDTO;
 import by.iba.dto.req.car.CarReqDTO;
 import by.iba.dto.req.user.SearchCriteriaReqDTO;
+import by.iba.dto.resp.RespStatusDTO;
 import by.iba.dto.resp.car.CarDTO;
 import by.iba.dto.resp.car.CarsDTO;
+import by.iba.dto.resp.user.UserDTO;
 import by.iba.helper.ControllerHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -53,5 +56,24 @@ public class CarControllerImpl implements CarController {
                 .status(200)
                 .body(auto);
 
+    }
+
+    @Override
+    public ResponseEntity<RespStatusDTO> deleteCar(@PathVariable Long id) {
+        carService.deleteById(id);
+
+        return ResponseEntity
+                .ok()
+                .body(new RespStatusDTO("Car is successfully deleted"));
+    }
+
+    @Override
+    public ResponseEntity<CarDTO> updateDescription(@PathVariable Long id, @RequestBody @Valid CarDescriptionReqDTO carDescriptionReqDTO, BindingResult bindingResult) {
+
+        CarDTO car = carService.addDescription(id, carDescriptionReqDTO);
+
+        return ResponseEntity
+                .status(200)
+                .body(car);
     }
 }

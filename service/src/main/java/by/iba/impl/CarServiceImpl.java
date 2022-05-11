@@ -1,6 +1,8 @@
 package by.iba.impl;
 
 import by.iba.CarService;
+import by.iba.PhotoService;
+import by.iba.dto.req.car.CarDescriptionReqDTO;
 import by.iba.dto.req.car.CarReqDTO;
 import by.iba.dto.req.user.SearchCriteriaReqDTO;
 import by.iba.dto.resp.car.CarDTO;
@@ -33,6 +35,7 @@ public class CarServiceImpl implements CarService {
     private final CarRepository carRepository;
     private final CarMapper carMapper;
     private final SearchServiceUtil searchServiceUtil;
+    private final PhotoService photoService;
 
     @Override
     @Transactional
@@ -80,6 +83,28 @@ public class CarServiceImpl implements CarService {
     public CarDTO getById(Long id) {
         return carMapper.fillFromInDTO(carRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CAR_HAS_BEEN_NOT_FOUND")));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        photoService.deleteAllByCarId(id);
+        carRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public CarDTO addDescription(Long id, CarDescriptionReqDTO carDescriptionReqDTO) {
+
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("CAR_HAS_BEEN_NOT_FOUND"));
+
+        if(Objects.nonNull(carDescriptionReqDTO.getDescription())) {
+            car.setDescription(carDescriptionReqDTO.getDescription());
+        }
+
+        car = carRepository.save(car);
+
+        return carMapper.fillFromInDTO(car);
     }
 
 

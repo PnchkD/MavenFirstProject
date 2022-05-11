@@ -6,6 +6,7 @@ import by.iba.entity.photo.Photo;
 import by.iba.repository.PhotoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +27,12 @@ public class PhotoServiceImpl implements PhotoService {
         photo.setImageUrl(imageUrl);
         photo.setCar(car);
         return photoRepository.save(photo);
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByCarId(Long id) {
+        photoRepository.deleteAllByCarId(id);
     }
 
 }
