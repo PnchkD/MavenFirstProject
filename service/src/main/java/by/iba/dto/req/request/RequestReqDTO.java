@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -45,22 +46,18 @@ public class RequestReqDTO extends BaseAbstractReq {
     @Size(message = "Transmission is too large", max = ReqValidation.MAX_AUTO_TRANSMISSION_LENGTH)
     private String transmission;
 
-    @NotBlank(message = "Auto's state cannot be empty")
     @Size(message = "State is too large", max = ReqValidation.MAX_AUTO_STATE_LENGTH)
     private String state;
 
-    @NotBlank(message = "Wishes cannot be empty")
     private String wishes;
 
-    @NotBlank(message = "Country cannot be empty")
     @Size(message = "Length is too large", max = ReqValidation.MAX_COUNTRY_NAME_LENGTH)
     private String country;
 
-    @NotBlank(message = "City cannot be empty")
     @Size(message = "Length is too large", max = ReqValidation.MAX_CITY_NAME_LENGTH)
     private String city;
 
-    @NotBlank(message = "User id cannot be empty")
+    @NotNull
     private Long userId;
 
 }

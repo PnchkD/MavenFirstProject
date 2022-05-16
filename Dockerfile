@@ -38,6 +38,6 @@ COPY --from=maven_build /app/controller/target/controller*.jar .
 
 CMD [ "java", "-jar","./controller.jar" ]
 
-# HEALTHCHECK --interval=30s --timeout=30s CMD curl -f http://localhost:8080/api/automotive_selection/actuator/health || exit 1
+HEALTHCHECK --interval=30s --timeout=30s CMD curl -f http://localhost:8080/api/automotive_selection/actuator/health || exit 1
 
 EXPOSE 8080:8080

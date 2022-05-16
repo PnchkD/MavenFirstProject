@@ -9,15 +9,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RequestMapping(path = "/api/v1/autopicker/requests")
+@RequestMapping(path = "/api/v1/requests")
 @CrossOrigin(origins = "*")
 public interface RequestController {
 
     @GetMapping("/")
     ResponseEntity<RequestsDTO> getRequests();
 
-    @PostMapping(value = "/create/{id}")
+    @PostMapping(value = "/create")
     ResponseEntity<RequestDTO> createRequest(@RequestBody @Valid RequestReqDTO requestReqDTO, BindingResult bindingResult);
-
 
 }

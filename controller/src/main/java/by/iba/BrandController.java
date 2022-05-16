@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RequestMapping(path = "/api/v1/autopicker/brands")
+@RequestMapping(path = "/api/v1/brands")
 @CrossOrigin(origins = "*")
 public interface BrandController {
 

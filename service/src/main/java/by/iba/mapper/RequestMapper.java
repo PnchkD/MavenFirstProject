@@ -44,6 +44,50 @@ public class RequestMapper {
             requestDTO.setDateOfLastUpdate(request.getDateOfLastUpdate());
         }
 
+        if(Objects.nonNull(request.getBrand())) {
+            requestDTO.setBrand(request.getBrand().getName());
+        }
+
+        if(Objects.nonNull(request.getColor())) {
+            requestDTO.setColor(request.getColor());
+        }
+
+        if(Objects.nonNull(request.getPrice())) {
+            requestDTO.setPrice(request.getPrice());
+        }
+
+        if(Objects.nonNull(request.getYearOfIssue())) {
+            requestDTO.setYearOfIssue(request.getYearOfIssue().toString());
+        }
+
+        if(Objects.nonNull(request.getMileage())) {
+            requestDTO.setMileage(request.getMileage());
+        }
+
+        if(Objects.nonNull(request.getEngineType())) {
+            requestDTO.setEngineType(request.getEngineType());
+        }
+
+        if(Objects.nonNull(request.getDriveUnit())) {
+            requestDTO.setDriveUnit(request.getDriveUnit().name());
+        }
+
+        if(Objects.nonNull(request.getBodyType())) {
+            requestDTO.setBodyType(request.getBodyType().name());
+        }
+
+        if(Objects.nonNull(request.getEngineCapacity())) {
+            requestDTO.setEngineCapacity(request.getEngineCapacity());
+        }
+
+        if(Objects.nonNull(request.getTransmission())) {
+            requestDTO.setTransmission(request.getTransmission());
+        }
+
+        if(Objects.nonNull(request.getState())) {
+            requestDTO.setState(request.getState().name());
+        }
+
         if(Objects.nonNull(request.getWishes())) {
             requestDTO.setWishes(request.getWishes());
         }
@@ -84,7 +128,7 @@ public class RequestMapper {
             request.setPrice(requestReqDTO.getPrice());
         }
 
-        if(Objects.nonNull(requestReqDTO.getYearOfIssue())) {
+        if(Objects.nonNull(requestReqDTO.getYearOfIssue()) && !Objects.equals(requestReqDTO.getYearOfIssue(), "")) {
             request.setYearOfIssue(LocalDate.parse(requestReqDTO.getYearOfIssue()));
         }
 
@@ -96,11 +140,11 @@ public class RequestMapper {
             request.setEngineType(requestReqDTO.getEngineType());
         }
 
-        if(Objects.nonNull(requestReqDTO.getDriveUnit())) {
+        if(Objects.nonNull(requestReqDTO.getDriveUnit()) && !Objects.equals(requestReqDTO.getDriveUnit(), "")) {
             request.setDriveUnit(CarDriveUnit.valueOf(requestReqDTO.getDriveUnit()));
         }
 
-        if(Objects.nonNull(requestReqDTO.getBodyType())) {
+        if(Objects.nonNull(requestReqDTO.getBodyType()) && !Objects.equals(requestReqDTO.getBodyType(), "")) {
             request.setBodyType(CarBodyType.valueOf(requestReqDTO.getBodyType()));
         }
 
