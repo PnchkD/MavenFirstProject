@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +22,7 @@ public class Departure extends AbstractEntity {
     private String description;
 
     @Column(name = "date_of_departure")
-    private LocalDateTime dateOfDeparture;
+    private LocalDate dateOfDeparture;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

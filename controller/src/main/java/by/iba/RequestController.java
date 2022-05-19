@@ -1,6 +1,8 @@
 package by.iba;
 
 import by.iba.dto.req.request.RequestReqDTO;
+import by.iba.dto.req.user.SearchCriteriaReqDTO;
+import by.iba.dto.resp.RespStatusDTO;
 import by.iba.dto.resp.request.RequestDTO;
 import by.iba.dto.resp.request.RequestsDTO;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +16,15 @@ import javax.validation.Valid;
 public interface RequestController {
 
     @GetMapping("/")
-    ResponseEntity<RequestsDTO> getRequests();
+    ResponseEntity<RequestsDTO> getRequests(SearchCriteriaReqDTO searchCriteriaReqDTO);
+
+    @GetMapping("/user/{id}")
+    ResponseEntity<RequestsDTO> getRequestsByUser(@PathVariable Long id);
 
     @PostMapping(value = "/create")
     ResponseEntity<RequestDTO> createRequest(@RequestBody @Valid RequestReqDTO requestReqDTO, BindingResult bindingResult);
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<RespStatusDTO> deleteRequest(@PathVariable Long id);
 
 }
