@@ -1,7 +1,9 @@
-package by.iba.entity.departure;
+package by.iba.entity.ticket;
 
 import by.iba.entity.AbstractEntity;
 import by.iba.entity.car.Car;
+import by.iba.entity.photo.Photo;
+import by.iba.entity.request.Request;
 import by.iba.entity.user.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,14 +11,18 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "departures")
+@Table(name = "tickets")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Departure extends AbstractEntity {
+public class Ticket extends AbstractEntity {
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "description")
     private String description;
@@ -31,5 +37,9 @@ public class Departure extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "auto_id")
     private Car car;
+
+    @ManyToOne
+    @JoinColumn(name = "request_id")
+    private Request request;
 
 }

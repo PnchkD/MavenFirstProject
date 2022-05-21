@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class RequestMapper {
     private final UserRepository userRepository;
     private final CarBrandRepository brandRepository;
     private final UserMapper userMapper;
+    private final TicketMapper ticketMapper;
 
     public RequestDTO fillInDTO(Request request) {
         RequestDTO requestDTO = new RequestDTO();
@@ -102,6 +104,13 @@ public class RequestMapper {
 
         if(Objects.nonNull(request.getUser())) {
             requestDTO.setFromUser(userMapper.fillFromInDTO(request.getUser()));
+        }
+
+        if(!request.getTickets().isEmpty()) {
+            requestDTO.setTickets(request.getTickets()
+                    .stream()
+                    .map(ticketMapper::fillFromInDTO)
+                    .collect(Collectors.toList()));
         }
 
         return requestDTO;

@@ -1,6 +1,7 @@
 package by.iba.dto.resp.request;
 
 import by.iba.dto.AbstractDTO;
+import by.iba.dto.resp.ticket.TicketDTO;
 import by.iba.dto.resp.user.UserDTO;
 import by.iba.validation.ReqValidation;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,5 +33,5 @@ public class RequestDTO extends AbstractDTO {
     private String country;
     private String city;
     private UserDTO fromUser;
-
+    private List<TicketDTO> tickets;
 }
