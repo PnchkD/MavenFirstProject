@@ -3,32 +3,39 @@ package by.iba.impl;
 import by.iba.PhotoService;
 import by.iba.UserRolesService;
 import by.iba.UserService;
+import by.iba.config.BucketName;
 import by.iba.dto.req.user.*;
 import by.iba.dto.resp.user.UserDTO;
 import by.iba.dto.resp.user.UserRoleDTO;
+import by.iba.entity.DocumentStatus;
 import by.iba.entity.photo.Photo;
+import by.iba.entity.photo.UserPhoto;
 import by.iba.entity.user.UserEntity;
 import by.iba.entity.user.UserRole;
 import by.iba.exception.*;
 import by.iba.mapper.UserMapper;
+import by.iba.mapper.UserPhotoMapper;
+import by.iba.repository.UserPhotoRepository;
 import by.iba.repository.UserRepository;
+import by.iba.s3.S3Service;
 import by.iba.service.EmailService;
 import by.iba.specification.user.UserSpecificationsBuilder;
 import by.iba.util.SearchServiceUtil;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -44,6 +51,10 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final UserRolesService userRolesService;
     private final SearchServiceUtil searchUtils;
+    private final UserPhotoRepository userPhotoRepository;
+    private final UserPhotoMapper userPhotoMapper;
+    private final S3Service s3Service;
+
 
     private static final String USER_ROLE = "USER";
     private static final String AUTOPICKER_ROLE = "AUTOPICKER";
@@ -202,15 +213,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateAvatar(Long id, UserAvatarReqDTO userAvatarReqDTO) {
-        UserEntity user = getUserById(id);
+    public void updateAvatar(Long id, MultipartFile image) throws IOException {
+        if (image.isEmpty()) {
+            throw new ServiceException(HttpStatus.BAD_REQUEST.value(), "exception.file_is_empty");
+        }
 
-        Photo avatar = photoService.save(userAvatarReqDTO.getImage());
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("content-type", image.getContentType());
 
-        userMapper.fillFromInDTO(user, avatar);
+        //generate
+        String path = String.format("%s/%s/%s", BucketName.FILE_IMAGE.getBucketName(), id, "something");
 
-        user.setDateOfLastUpdate(LocalDateTime.now());
-        userRepository.save(user);
+        UserPhoto userPhoto = new UserPhoto();
+        userPhoto.setName(image.getOriginalFilename());
+        userPhoto.setStatus(DocumentStatus.TRANSIENT);
+        userPhoto.setPath(path);
+        userPhoto.setUserId(id);
+        userPhoto.setSize(image.getSize());
+        UserPhoto preSavedFile = userPhotoRepository.save(userPhoto);
+        String key = String.format("%s", userPhoto.getUniqueId() + "_" + image.getOriginalFilename());
+
+        PutObjectResult uploadedResult = s3Service.upload(path, key, Optional.of(metadata), image.getInputStream());
+
+        UserPhoto uploadedFile = userPhotoRepository.getOne(userPhoto.getId());
+        uploadedFile.setStatus(DocumentStatus.COMPLETED);
+        uploadedFile.setExternalKey(key);
+
+        UserPhoto savedFile = userPhotoRepository.save(uploadedFile);
     }
 
     @Override

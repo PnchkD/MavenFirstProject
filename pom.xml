@@ -34,6 +34,7 @@
         <jwt.version>0.9.1</jwt.version>
         <jakarta.version>2.0.2</jakarta.version>
         <lombok.version>1.18.22</lombok.version>
+        <aws-java-sdk-version>1.11.931</aws-java-sdk-version>
     </properties>
 
     <dependencyManagement>
@@ -83,6 +84,11 @@
                 <groupId>org.example</groupId>
                 <artifactId>email-service</artifactId>
                 <version>${models.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk</artifactId>
+                <version>${aws-java-sdk-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,6 +1,8 @@
 package by.iba.specification.car;
 
 import by.iba.entity.car.Car;
+import by.iba.entity.car.CarBodyType;
+import by.iba.entity.car.CarDriveUnit;
 import by.iba.specification.SpecSearchCriteria;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -8,6 +10,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CarSpecification implements Specification<Car> {
 
@@ -44,5 +48,36 @@ public class CarSpecification implements Specification<Car> {
             default:
                 return null;
         }
+    }
+
+    public static Specification<Car> findAllByCarsBrand(String brand) {
+        return (Specification<Car>) (root, query, builder) -> {
+            List<Predicate> predicates = buildPredicates(root, builder, brand);
+            return
+                    builder.or(predicates.toArray(new Predicate[predicates.size()]));
+        };
+    }
+
+    public static Specification<Car> findAllByCarsDriveUnit(String driveUnit) {
+        return (Specification<Car>) (root, query, builder) ->
+                builder
+                        .equal(root.get("driveUnit"), CarDriveUnit.valueOf(driveUnit));
+    }
+
+    public static Specification<Car> findAllByCarsBodyType(String bodyType) {
+        return (Specification<Car>) (root, query, builder) ->
+                builder
+                        .equal(root.get("bodyType"), CarBodyType.valueOf(bodyType));
+    }
+
+    private static List<Predicate> buildPredicates(Root<Car> root,
+                                                   CriteriaBuilder criteriaBuilder,
+                                                   String brand) {
+        List<Predicate> predicates = new ArrayList<>();
+        System.out.println(root.getClass());
+        predicates.add(
+                criteriaBuilder.equal(root.join("brand").get("name"), brand));
+
+        return predicates;
     }
 }

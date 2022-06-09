@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static by.iba.specification.car.CarSpecification.*;
+
 public final class CarSpecificationsBuilder {
 
     private final List<SpecSearchCriteria> params;
@@ -36,12 +38,26 @@ public final class CarSpecificationsBuilder {
         if (params.size() == 0)
             return null;
 
-        Specification<Car> result = new CarSpecification(params.get(0));
+        Specification<Car> result = null;
 
-        for (int i = 1; i < params.size(); i++) {
-            result = params.get(i).isOrPredicate()
-                    ? Specification.where(result).or(new CarSpecification(params.get(i)))
-                    : Specification.where(result).and(new CarSpecification(params.get(i)));
+        for (int i = 0; i < params.size(); i++) {
+            if (params.get(i).getKey().equals("brand")) {
+                result = params.get(i).isOrPredicate()
+                        ? Specification.where(result).or(findAllByCarsBrand(params.get(i).getValue().toString()))
+                        : Specification.where(result).and(findAllByCarsBrand(params.get(i).getValue().toString()));
+            } else if(params.get(i).getKey().equals("driveUnit")) {
+                result = params.get(i).isOrPredicate()
+                        ? Specification.where(result).or(findAllByCarsDriveUnit(params.get(i).getValue().toString()))
+                        : Specification.where(result).and(findAllByCarsDriveUnit(params.get(i).getValue().toString()));
+            } else if(params.get(i).getKey().equals("bodyType")) {
+                result = params.get(i).isOrPredicate()
+                        ? Specification.where(result).or(findAllByCarsBodyType(params.get(i).getValue().toString()))
+                        : Specification.where(result).and(findAllByCarsBodyType(params.get(i).getValue().toString()));
+            } else {
+                result = params.get(i).isOrPredicate()
+                        ? Specification.where(result).or(new CarSpecification(params.get(i)))
+                        : Specification.where(result).and(new CarSpecification(params.get(i)));
+            }
         }
 
         return result;

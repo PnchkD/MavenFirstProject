@@ -42,3 +42,6 @@ security-token-app:
 
     refreshTokenSecret: 926D96C90030DD58429D2751AC1BDBBC
     refreshTokenExpirationMsec: 120000000 #one minute; remove one 0 and show tokes death
+
+AWS_ACCESS_KEY: AKIA5SEBSOS4NAU5PEW4
+AWS_SECRET_KEY: 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

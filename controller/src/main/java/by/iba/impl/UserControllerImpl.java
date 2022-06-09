@@ -14,8 +14,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @AllArgsConstructor
@@ -45,10 +47,8 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestBody @Valid UserAvatarReqDTO userAvatarReqDTO, BindingResult bindingResult) {
-        ControllerHelper.checkBindingResultAndThrowExceptionIfInvalid(bindingResult);
-
-        userService.updateAvatar(id, userAvatarReqDTO);
+    public ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, MultipartFile image) throws IOException {
+        userService.updateAvatar(id, image);
 
         return ResponseEntity
                 .ok()
