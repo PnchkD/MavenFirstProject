@@ -1,6 +1,7 @@
 package by.iba.entity.request;
 
 import by.iba.entity.AbstractCarDescription;
+import by.iba.entity.comment.Comment;
 import by.iba.entity.photo.Photo;
 import by.iba.entity.region.Region;
 import by.iba.entity.ticket.Ticket;
@@ -33,5 +34,8 @@ public class Request extends AbstractCarDescription {
 
     @OneToMany(mappedBy = "request")
     private Set<Ticket> tickets = new HashSet<>();
+
+    @OneToMany(mappedBy = "request")
+    private Set<Comment> comments = new HashSet<>();
 
 }

@@ -24,4 +24,8 @@ public final class ReqValidation {
     public static final int MAX_COUNTRY_NAME_LENGTH = 64;
     public static final int MAX_CITY_NAME_LENGTH = 64;
 
+    public static final int MAX_COMMENT_CONTENT_LENGTH = 512;
+    public static final int MAX_COMMENT_RATING_LENGTH = 10;
+
+
 }

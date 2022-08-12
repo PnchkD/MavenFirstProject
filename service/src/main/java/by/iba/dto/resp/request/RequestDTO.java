@@ -1,6 +1,7 @@
 package by.iba.dto.resp.request;
 
 import by.iba.dto.AbstractDTO;
+import by.iba.dto.resp.comment.CommentDTO;
 import by.iba.dto.resp.ticket.TicketDTO;
 import by.iba.dto.resp.user.UserDTO;
 import by.iba.validation.ReqValidation;
@@ -16,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 public class RequestDTO extends AbstractDTO {
 
-    private Long id;
     private String type;
     private String brand;
     private String color;
@@ -34,4 +34,5 @@ public class RequestDTO extends AbstractDTO {
     private String city;
     private UserDTO fromUser;
     private List<TicketDTO> tickets;
+    private List<CommentDTO> comments;
 }

@@ -23,4 +23,6 @@ public class UserAuthReqDTO extends BaseAbstractReq {
     @NotBlank(message = "Password cannot be empty")
     private String password;
 
+    private String email;
+
 }

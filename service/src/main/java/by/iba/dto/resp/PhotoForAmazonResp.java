@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PhotoForAmazonResp extends AbstractDTO {
 
-    private Long companyId;
+    private Long userId;
 
     private String uniqueId;
 
@@ -22,6 +22,8 @@ public class PhotoForAmazonResp extends AbstractDTO {
     private Long size;
 
     private String externalKey;
+
+    private String presignedUrl;
 
     private DocumentStatus status;
 

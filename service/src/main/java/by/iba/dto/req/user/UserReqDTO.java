@@ -1,6 +1,7 @@
 package by.iba.dto.req.user;
 
 import by.iba.dto.BaseAbstractReq;
+import by.iba.entity.SupportedAuthProvider;
 import by.iba.validation.ReqValidation;
 import by.iba.validation.ValidEmail;
 import lombok.*;
@@ -39,5 +40,6 @@ public class UserReqDTO extends BaseAbstractReq {
     private String email;
 
     private String isAutoPicker;
+    private SupportedAuthProvider provider;
 
 }

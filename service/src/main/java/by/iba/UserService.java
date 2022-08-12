@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -14,11 +15,15 @@ public interface UserService {
 
     UserDTO findById(Long id);
 
+    Optional<UserEntity> findByEmail(String email);
+
     UserDTO save(UserReqDTO userReqDTO);
 
     UserEntity login(UserAuthReqDTO userAuthReqDTO);
 
     UserDTO update(Long id, UserPersonalDataReqDTO userPersonalDataReqDTO);
+
+    UserDTO update(Long id, UserDTO userDTO);
 
     UserDTO banUser(Long id, boolean verdict);
 

@@ -1,12 +1,15 @@
 package by.iba.filter;
 
+import by.iba.config.AppProperties;
 import by.iba.entity.user.UserEntity;
+import by.iba.oauth2.user.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.Authentication;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
@@ -69,6 +72,41 @@ public class JwtUtil {
                 .compact();
 
         return new AccessToken(accessToken, TOKEN_TYPE, expirationSeconds);
+    }
+
+    public String createTokenWithOauth(Authentication authentication) {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+        String rolePrefix = "ROLE_";
+        Claims claims = Jwts.claims()
+                .setSubject(userPrincipal.getLogin());
+        List<String> roles = userPrincipal.getAuthorities().stream()
+                .map(x -> rolePrefix + x)
+                .collect(Collectors.toList());
+        claims.put("roles", roles);
+        claims.put("email", userPrincipal.getEmail());
+        claims.put("id", userPrincipal.getId());
+
+        Date currentDate = new Date();
+        Date expiration = new Date(currentDate.getTime() + expirationSeconds);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userPrincipal.getLogin())
+                .setIssuedAt(currentDate)
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+//        Date now = new Date();
+//        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
+//
+//
+//        return Jwts.builder()
+//                .setSubject(Long.toString(userPrincipal.getId()))
+//                .setIssuedAt(new Date())
+//                .setExpiration(expiryDate)
+//                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+//                .compact();
     }
 
     public boolean isBearer(String token){

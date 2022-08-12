@@ -24,7 +24,7 @@ public interface UserController {
     ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody @Valid UserPersonalDataReqDTO userPersonalDataReqDTO, BindingResult bindingResult);
 
     @PatchMapping("/{id}/avatar")
-    ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, MultipartFile image) throws IOException;
+    ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestParam("image") MultipartFile image) throws IOException;
 
     @PatchMapping("/{id}/credentials")
     ResponseEntity<RespStatusDTO> updatePassword(@PathVariable Long id, @RequestBody @Valid UserCredentialsReqDTO userCredentialsReqDTO, BindingResult bindingResult);

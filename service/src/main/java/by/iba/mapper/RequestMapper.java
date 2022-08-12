@@ -30,6 +30,7 @@ public class RequestMapper {
     private final CarBrandRepository brandRepository;
     private final UserMapper userMapper;
     private final TicketMapper ticketMapper;
+    private final CommentMapper commentMapper;
 
     public RequestDTO fillInDTO(Request request) {
         RequestDTO requestDTO = new RequestDTO();
@@ -110,6 +111,13 @@ public class RequestMapper {
             requestDTO.setTickets(request.getTickets()
                     .stream()
                     .map(ticketMapper::fillFromInDTO)
+                    .collect(Collectors.toList()));
+        }
+
+        if(!request.getComments().isEmpty()) {
+            requestDTO.setComments(request.getComments()
+                    .stream()
+                    .map(commentMapper::fillInDTO)
                     .collect(Collectors.toList()));
         }
 

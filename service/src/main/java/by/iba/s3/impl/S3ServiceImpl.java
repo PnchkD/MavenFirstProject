@@ -74,12 +74,12 @@ public class S3ServiceImpl implements S3Service {
 
     }
 
+
     @Override
     public String getPresignedImageUrl(String bucketName, String key, Date expiration) {
         URL url = amazonS3.generatePresignedUrl(bucketName, key, expiration);
 
         return url.toString();
     }
-
 }
 

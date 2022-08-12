@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +48,7 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, MultipartFile image) throws IOException {
+    public ResponseEntity<RespStatusDTO> updateAvatar(@PathVariable Long id, @RequestParam("photos") MultipartFile image) throws IOException {
         userService.updateAvatar(id, image);
 
         return ResponseEntity

@@ -5,6 +5,7 @@ import by.iba.UserRolesService;
 import by.iba.UserService;
 import by.iba.config.BucketName;
 import by.iba.dto.req.user.*;
+import by.iba.dto.resp.PhotoForAmazonResp;
 import by.iba.dto.resp.user.UserDTO;
 import by.iba.dto.resp.user.UserRoleDTO;
 import by.iba.entity.DocumentStatus;
@@ -94,7 +95,16 @@ public class UserServiceImpl implements UserService {
     public UserDTO findById(Long id) {
         UserEntity user = getUserById(id);
 
-        return userMapper.fillFromInDTO(user);
+        PhotoForAmazonResp photo = photoService.findByUserId(id);
+        UserDTO userDTO = userMapper.fillFromInDTO(user, photo);
+
+        return userDTO;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -150,6 +160,20 @@ public class UserServiceImpl implements UserService {
         UserEntity user = getUserById(id);
 
         userMapper.fillFromInDTO(user, userPersonalDataReqDTO);
+
+        user.setDateOfLastUpdate(LocalDateTime.now());
+        userRepository.save(user);
+
+        return userMapper.fillFromInDTO(user);
+    }
+
+    @Override
+    @Transactional
+    public UserDTO update(Long id, UserDTO userDTO) {
+
+        UserEntity user = getUserById(id);
+
+        userMapper.fillFromInDTO(user, userDTO);
 
         user.setDateOfLastUpdate(LocalDateTime.now());
         userRepository.save(user);
@@ -222,8 +246,7 @@ public class UserServiceImpl implements UserService {
         metadata.put("content-type", image.getContentType());
 
         //generate
-        String path = String.format("%s/%s/%s", BucketName.FILE_IMAGE.getBucketName(), id, "something");
-
+        String path = String.format("%s/%s/%s", BucketName.FILE_IMAGE.getBucketName(), id, "images");
         UserPhoto userPhoto = new UserPhoto();
         userPhoto.setName(image.getOriginalFilename());
         userPhoto.setStatus(DocumentStatus.TRANSIENT);
